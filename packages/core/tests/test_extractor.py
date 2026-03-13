@@ -7,11 +7,10 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
-from pydantic import BaseModel
-
 from docminer.exceptions import ExtractionError
 from docminer.extractor import Extractor
 from docminer.result import ExtractionResult
+from pydantic import BaseModel
 
 
 class Receipt(BaseModel):

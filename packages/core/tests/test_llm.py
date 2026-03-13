@@ -3,9 +3,8 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
-from pydantic import BaseModel
-
 from docminer.llm import build_messages, call_llm
+from pydantic import BaseModel
 
 FIXTURES = Path(__file__).parent / "fixtures"
 

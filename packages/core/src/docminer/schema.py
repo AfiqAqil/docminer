@@ -1,5 +1,5 @@
 import json
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, create_model
 
@@ -42,13 +42,15 @@ def _resolve_field(field_name: str, field_type: Any) -> Any:
             if len(parts) == 2 and "None" in parts:
                 base_type_str = parts[0] if parts[1] == "None" else parts[1]
                 base_type = _resolve_type_str(field_name, base_type_str)
-                return (Optional[base_type], None)
+                return (base_type | None, None)
             raise SchemaError(
                 f"Invalid union type '{field_type}' for field '{field_name}'"
             )
         return (_resolve_type_str(field_name, field_type), ...)
 
-    raise SchemaError(f"Unsupported field definition for '{field_name}': {field_type}")
+    raise SchemaError(
+        f"Unsupported field definition for '{field_name}': {field_type}"
+    )
 
 
 def _resolve_type_str(field_name: str, type_str: str) -> type:

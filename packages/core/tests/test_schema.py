@@ -1,12 +1,9 @@
 import json
-from typing import Optional
-
-from pydantic import BaseModel
 
 import pytest
-
 from docminer.exceptions import SchemaError
 from docminer.schema import from_dict, schema_to_prompt
+from pydantic import BaseModel
 
 
 class FlatModel(BaseModel):
@@ -26,8 +23,8 @@ class NestedModel(BaseModel):
 
 class OptionalFieldsModel(BaseModel):
     name: str
-    nickname: Optional[str] = None
-    age: Optional[int] = None
+    nickname: str | None = None
+    age: int | None = None
 
 
 def test_flat_model_contains_field_names():

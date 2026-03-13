@@ -6,7 +6,8 @@ import json
 from pathlib import Path
 from typing import Any
 
-from pydantic import BaseModel, ValidationError as PydanticValidationError
+from pydantic import BaseModel
+from pydantic import ValidationError as PydanticValidationError
 
 from docminer.exceptions import ExtractionError
 from docminer.llm import build_messages, call_llm
@@ -85,9 +86,11 @@ class Extractor:
                 usage=usage,
             )
 
-        raise ExtractionError(
-            f"Extraction failed after retry: LLM output does not match schema {schema.__name__}"
+        msg = (
+            "Extraction failed after retry: "
+            f"LLM output does not match schema {schema.__name__}"
         )
+        raise ExtractionError(msg)
 
     @staticmethod
     def _load_source(source: str | Path | bytes) -> tuple[bytes, str]:
