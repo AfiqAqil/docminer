@@ -1,0 +1,26 @@
+[project]
+name = "docminer-api"
+version = "0.1.0"
+description = "FastAPI backend for docminer"
+requires-python = ">=3.12"
+license = "MIT"
+dependencies = [
+    "docminer",
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.34",
+    "sqlmodel>=0.0.22",
+    "aiosqlite>=0.20",
+    "python-multipart>=0.0.18",
+    "sse-starlette>=2.0",
+    "pydantic-settings>=2.0",
+]
+
+[tool.uv.sources]
+docminer = { workspace = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/docminer_api"]

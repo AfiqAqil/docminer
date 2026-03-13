@@ -208,3 +208,9 @@ __marimo__/
 
 # Claude Code
 .claude/
+
+# Docminer project
+data/
+node_modules/
+.next/
+packages/web/src/lib/api/generated/
