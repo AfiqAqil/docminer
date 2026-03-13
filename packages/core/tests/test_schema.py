@@ -3,7 +3,10 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from docminer.schema import schema_to_prompt
+import pytest
+
+from docminer.exceptions import SchemaError
+from docminer.schema import from_dict, schema_to_prompt
 
 
 class FlatModel(BaseModel):
@@ -66,3 +69,44 @@ def test_output_is_valid_json():
         result = schema_to_prompt(model)
         parsed = json.loads(result)
         assert isinstance(parsed, dict)
+
+
+# --- from_dict tests ---
+
+
+def test_from_dict_flat_model():
+    """from_dict with flat str/int fields creates a valid Pydantic model."""
+    Model = from_dict({"name": "str", "age": "int"})
+    instance = Model(name="Alice", age=30)
+    assert instance.name == "Alice"
+    assert instance.age == 30
+
+
+def test_from_dict_nested_list_of_dicts():
+    """from_dict handles a list-of-dicts field definition."""
+    Model = from_dict({"items": [{"desc": "str", "qty": "int"}]})
+    instance = Model(items=[{"desc": "Widget", "qty": 5}])
+    assert instance.items == [{"desc": "Widget", "qty": 5}]
+
+
+def test_from_dict_optional_fields():
+    """from_dict handles 'type | None' optional syntax."""
+    Model = from_dict({"name": "str", "nickname": "str | None"})
+    instance = Model(name="Alice")
+    assert instance.name == "Alice"
+    assert instance.nickname is None
+
+
+def test_from_dict_unknown_type_raises_schema_error():
+    """from_dict raises SchemaError for unknown type strings."""
+    with pytest.raises(SchemaError, match="Unknown type"):
+        from_dict({"bad": "unknown_type"})
+
+
+def test_from_dict_round_trip_with_schema_to_prompt():
+    """from_dict model can be passed to schema_to_prompt successfully."""
+    Model = from_dict({"name": "str", "age": "int"})
+    result = schema_to_prompt(Model)
+    parsed = json.loads(result)
+    assert "name" in parsed.get("properties", {})
+    assert "age" in parsed.get("properties", {})
