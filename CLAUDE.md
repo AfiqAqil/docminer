@@ -87,6 +87,7 @@ ECC skills are installed and auto-trigger. Tiers:
 ## Shell Commands
 
 - **No compound commands:** Don't use `cd /path && command`. The working directory is always the repo root — run commands directly (e.g., `git log --oneline -10`, not `cd /repo && git log --oneline -10`).
+- **No `$()` substitution in commit messages:** Claude Code flags `$()` command substitution as a potential injection risk even with broad permissions. Pass commit messages directly: `git commit -m "type(scope): description"` — no heredoc needed.
 
 ## Gotchas
 
