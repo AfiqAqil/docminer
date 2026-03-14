@@ -70,28 +70,25 @@ Examples:
 
 ## Claude Code Modes
 
-Three modes are available and must be used intentionally:
-
 | Mode | When | How |
 |---|---|---|
-| **Normal** | Casual edits, questions, small fixes | Default — no special action needed |
-| **Plan mode** | Before any multi-step implementation | `EnterPlanMode` tool — present plan, wait for approval, then `ExitPlanMode` |
-| **Editing mode** | Actively implementing an approved plan | Default edit/write tools — triggered after plan approval |
+| **Normal** | Questions, small single-file edits | Default |
+| **Plan mode** | Any multi-step or multi-file work | Use `EnterPlanMode`, present plan, wait for approval, then `ExitPlanMode` |
+| **Editing mode** | Implementing an approved plan | Default edit/write tools after plan approval |
 
 ## Workflow
 
-ECC skills are installed and auto-trigger. Use the correct skill chain per tier:
+Use the correct tier and invoke the matching skills:
 
 | Tier | Skill chain |
 |---|---|
-| **Large feature** | `brainstorming` → `writing-plans` → `executing-plans` (or `subagent-driven-development`) |
-| **Small feature** | `writing-plans` in Plan mode → TDD → commit |
-| **Bug fix** | `systematic-debugging` → TDD → commit |
+| **Large feature** | `superpowers:brainstorming` → `superpowers:writing-plans` → `superpowers:executing-plans` |
+| **Small feature** | `superpowers:writing-plans` in Plan mode → TDD → commit |
+| **Bug fix** | `superpowers:systematic-debugging` → TDD → commit |
 
-- **Brainstorming:** Always use `superpowers:brainstorming` skill. Asks questions one at a time, proposes approaches, gets design approval before any code.
-- **Planning:** Always use `superpowers:writing-plans` skill inside `EnterPlanMode`. Saves plan to `docs/plans/YYYY-MM-DD-<topic>.md`.
-- **Execution:** Use `superpowers:executing-plans` (new session) or `superpowers:subagent-driven-development` (this session).
-- **Always:** `verification-before-completion` before done, `simplify` after implementation.
+- **Always:** run `superpowers:verification-before-completion` before marking done, `simplify` after implementation
+- **Planning:** save plan to `docs/plans/YYYY-MM-DD-<topic>.md` and commit it
+- **Tasks:** use `TaskCreate`/`TaskUpdate` to track progress on any multi-step work
 
 ## Testing
 
