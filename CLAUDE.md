@@ -84,6 +84,10 @@ ECC skills are installed and auto-trigger. Tiers:
 - **Frontend:** Deferred (Playwright e2e later).
 - Run `make test` before every commit.
 
+## Shell Commands
+
+- **No compound commands:** Don't use `cd /path && command`. The working directory is always the repo root — run commands directly (e.g., `git log --oneline -10`, not `cd /repo && git log --oneline -10`).
+
 ## Gotchas
 
 - **litellm model strings** are provider-prefixed: `ollama/llama3.2-vision`, not `llama3.2-vision`
