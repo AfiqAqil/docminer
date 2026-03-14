@@ -68,55 +68,13 @@ Examples:
 - PR to merge back into `main`
 - No broken commits on `main`
 
-## Workflow (Tiered)
+## Workflow
 
-**Always ask which tier applies before starting. Recommend the appropriate tier but let the user decide.**
-
-### Tier 1 — Large Features
-New modules, new pages, architectural changes.
-
-1. **Brainstorm** — skill: `brainstorming` → design doc in `docs/plans/`
-2. **Write plan** — skill: `writing-plans` → implementation plan
-3. **Execute** — skill: `executing-plans` or `subagent-driven-development` (ask user preference)
-4. **Frontend work** — skill: `frontend-design` for any UI tasks during execution
-5. **Review** — skill: `requesting-code-review`
-6. **Finish** — skill: `finishing-a-development-branch`
-
-### Tier 2 — Small Features / Enhancements
-New endpoint, new component, small additions.
-
-1. **Plan** — write plan in plan mode (no design doc)
-2. **Execute** — TDD (skill: `test-driven-development`)
-3. **Frontend work** — skill: `frontend-design` for any UI tasks
-4. **Commit and PR**
-
-### Tier 3 — Bug Fixes
-1. **Debug** — skill: `systematic-debugging`
-2. **Fix** — TDD (write regression test, then fix)
-3. **Commit and PR**
-
-### Always
-- Use skill: `verification-before-completion` before claiming work is done
-- Use skill: `simplify` after implementation to review for quality
-
-## Available Skills
-
-| Skill | When to use |
-|---|---|
-| `brainstorming` | Any creative work — new features, modules, architectural changes. Explores intent and design before code. |
-| `writing-plans` | After brainstorming or when you have a spec. Creates bite-sized implementation plan with TDD. |
-| `executing-plans` | Execute an implementation plan in a separate session with review checkpoints. |
-| `subagent-driven-development` | Execute plans with independent tasks using parallel subagents in current session. |
-| `frontend-design` | Any UI work — pages, components, layouts. Produces distinctive, polished interfaces. |
-| `test-driven-development` | Any implementation. Write failing test first, then implement. |
-| `systematic-debugging` | Any bug, test failure, or unexpected behavior. Diagnose before fixing. |
-| `requesting-code-review` | After completing features. Verify work meets requirements. |
-| `receiving-code-review` | When processing review feedback. Don't blindly agree — verify suggestions. |
-| `verification-before-completion` | Before claiming work is done. Run tests, check output, evidence before assertions. |
-| `simplify` | After implementation. Review for reuse, quality, efficiency. |
-| `finishing-a-development-branch` | When implementation is complete. Guides merge, PR, or cleanup. |
-| `dispatching-parallel-agents` | When facing 2+ independent tasks with no shared state. |
-| `using-git-worktrees` | When starting feature work that needs isolation from current workspace. |
+ECC skills are installed and auto-trigger. Tiers:
+- **Large feature:** brainstorm → plan → execute → review → finish
+- **Small feature:** plan → TDD → commit
+- **Bug fix:** debug → TDD → commit
+- **Always:** `verification-before-completion` before done, `simplify` after implementation
 
 ## Testing
 
