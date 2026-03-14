@@ -68,13 +68,30 @@ Examples:
 - PR to merge back into `main`
 - No broken commits on `main`
 
+## Claude Code Modes
+
+Three modes are available and must be used intentionally:
+
+| Mode | When | How |
+|---|---|---|
+| **Normal** | Casual edits, questions, small fixes | Default — no special action needed |
+| **Plan mode** | Before any multi-step implementation | `EnterPlanMode` tool — present plan, wait for approval, then `ExitPlanMode` |
+| **Editing mode** | Actively implementing an approved plan | Default edit/write tools — triggered after plan approval |
+
 ## Workflow
 
-ECC skills are installed and auto-trigger. Tiers:
-- **Large feature:** brainstorm → plan → execute → review → finish
-- **Small feature:** plan → TDD → commit
-- **Bug fix:** debug → TDD → commit
-- **Always:** `verification-before-completion` before done, `simplify` after implementation
+ECC skills are installed and auto-trigger. Use the correct skill chain per tier:
+
+| Tier | Skill chain |
+|---|---|
+| **Large feature** | `brainstorming` → `writing-plans` → `executing-plans` (or `subagent-driven-development`) |
+| **Small feature** | `writing-plans` in Plan mode → TDD → commit |
+| **Bug fix** | `systematic-debugging` → TDD → commit |
+
+- **Brainstorming:** Always use `superpowers:brainstorming` skill. Asks questions one at a time, proposes approaches, gets design approval before any code.
+- **Planning:** Always use `superpowers:writing-plans` skill inside `EnterPlanMode`. Saves plan to `docs/plans/YYYY-MM-DD-<topic>.md`.
+- **Execution:** Use `superpowers:executing-plans` (new session) or `superpowers:subagent-driven-development` (this session).
+- **Always:** `verification-before-completion` before done, `simplify` after implementation.
 
 ## Testing
 
