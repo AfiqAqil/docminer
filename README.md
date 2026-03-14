@@ -14,6 +14,8 @@ Based on "Page" — a production system deployed across education, logistics, an
 pip install docminer
 ```
 
+**With a Pydantic model:**
+
 ```python
 from pydantic import BaseModel
 from docminer import Extractor
@@ -28,6 +30,17 @@ extractor = Extractor(model="ollama/llama3.2-vision")
 result = extractor.extract("invoice.pdf", schema=Invoice)
 
 print(result.data)  # validated Invoice instance
+```
+
+**With a plain dict (no Pydantic required):**
+
+```python
+from docminer import Extractor
+from docminer.schema import from_dict
+
+schema = from_dict({"invoice_no": "str", "date": "str", "total": "float"})
+extractor = Extractor(model="ollama/llama3.2-vision")
+result = extractor.extract("invoice.pdf", schema=schema)
 ```
 
 ## Quick Start (Web App)
@@ -72,9 +85,13 @@ docminer/
 ```bash
 git clone https://github.com/afiq/docminer.git
 cd docminer
-uv sync                       # install Python dependencies
-cd packages/web && pnpm install  # install frontend dependencies
-cd ../..
+make setup   # installs Python + frontend dependencies
+```
+
+**Configure the web app** — create `packages/web/.env.local`:
+
+```
+NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
 
 ## Commands
