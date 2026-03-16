@@ -1,14 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import { FileText } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { EmptyState } from "@/components/empty-state";
+import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { PageHeader } from "@/components/page-header";
-import { EmptyState } from "@/components/empty-state";
 import { api, type Document } from "@/lib/api/client";
 
 export default function DocumentsPage() {
@@ -24,7 +24,7 @@ export default function DocumentsPage() {
       setDocuments(docs);
     } catch (err) {
       toast.error(
-        err instanceof Error ? err.message : "Failed to load documents"
+        err instanceof Error ? err.message : "Failed to load documents",
       );
     } finally {
       setLoading(false);

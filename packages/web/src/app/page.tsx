@@ -1,24 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Braces, CheckCircle2, FileUp, Sparkles } from "lucide-react";
 import Link from "next/link";
-import {
-  Braces,
-  CheckCircle2,
-  FileText,
-  FileUp,
-  Sparkles,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { StatusBadge } from "@/components/status-badge";
+import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/page-header";
+import { StatusBadge } from "@/components/status-badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   api,
   type Document,
@@ -33,11 +22,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([
-      api.documents.list(),
-      api.schemas.list(),
-      api.extract.list(),
-    ])
+    Promise.all([api.documents.list(), api.schemas.list(), api.extract.list()])
       .then(([docs, schs, jobs]) => {
         setDocuments(docs);
         setSchemas(schs);
@@ -132,8 +117,7 @@ function OnboardingView({
     <div>
       <div className="text-center mb-12 mt-8">
         <h1 className="text-3xl font-bold tracking-tight mb-2">
-          Welcome to{" "}
-          <span className="text-primary">docminer</span>
+          Welcome to <span className="text-primary">docminer</span>
         </h1>
         <p className="text-muted-foreground max-w-md mx-auto">
           Extract structured data from documents using AI and custom schemas.
@@ -172,9 +156,7 @@ function OnboardingView({
                   variant={done ? "outline" : "default"}
                   size="sm"
                 >
-                  <Link href={step.href}>
-                    {done ? "Done" : step.label}
-                  </Link>
+                  <Link href={step.href}>{done ? "Done" : step.label}</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -199,7 +181,7 @@ function StatsView({
   extractions: ExtractionJob[];
 }) {
   const completedCount = extractions.filter(
-    (j) => j.status === "completed"
+    (j) => j.status === "completed",
   ).length;
   const successRate =
     extractions.length > 0
@@ -238,14 +220,24 @@ function StatsView({
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <span className="text-sm font-medium">
-                        {docMap.get(job.document_id) ?? `Doc #${job.document_id}`}
+                        {docMap.get(job.document_id) ??
+                          `Doc #${job.document_id}`}
                       </span>
                       <span className="text-xs text-muted-foreground">
-                        {schemaMap.get(job.schema_id) ?? `Schema #${job.schema_id}`}
+                        {schemaMap.get(job.schema_id) ??
+                          `Schema #${job.schema_id}`}
                       </span>
                     </div>
                     <div className="flex items-center gap-3">
-                      <StatusBadge status={job.status as "pending" | "processing" | "completed" | "failed"} />
+                      <StatusBadge
+                        status={
+                          job.status as
+                            | "pending"
+                            | "processing"
+                            | "completed"
+                            | "failed"
+                        }
+                      />
                       <span className="text-xs text-muted-foreground">
                         {formatRelativeTime(job.created_at)}
                       </span>
@@ -261,13 +253,7 @@ function StatsView({
   );
 }
 
-function StatCard({
-  label,
-  value,
-}: {
-  label: string;
-  value: number | string;
-}) {
+function StatCard({ label, value }: { label: string; value: number | string }) {
   return (
     <Card>
       <CardContent className="pt-4">

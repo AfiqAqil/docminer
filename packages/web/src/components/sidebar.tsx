@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import {
   Braces,
   FileText,
@@ -10,6 +8,8 @@ import {
   Settings,
   Sparkles,
 } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 
 const links = [

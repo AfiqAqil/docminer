@@ -1,8 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import { Check, Copy, Sparkles } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { EmptyState } from "@/components/empty-state";
+import { PageHeader } from "@/components/page-header";
+import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -13,9 +16,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { PageHeader } from "@/components/page-header";
-import { EmptyState } from "@/components/empty-state";
-import { StatusBadge } from "@/components/status-badge";
 import {
   api,
   type Document,
@@ -40,9 +40,7 @@ export default function ExtractPage() {
         setSchemas(schs);
       })
       .catch((err) =>
-        toast.error(
-          err instanceof Error ? err.message : "Failed to load data"
-        )
+        toast.error(err instanceof Error ? err.message : "Failed to load data"),
       );
   }, []);
 
@@ -74,13 +72,11 @@ export default function ExtractPage() {
       setJob(null);
       const newJob = await api.extract.start(
         Number(selectedDocId),
-        Number(selectedSchemaId)
+        Number(selectedSchemaId),
       );
       setJob(newJob);
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Extraction failed"
-      );
+      toast.error(err instanceof Error ? err.message : "Extraction failed");
     } finally {
       setExtracting(false);
     }
@@ -89,7 +85,7 @@ export default function ExtractPage() {
   async function copyResult() {
     if (!job?.result) return;
     await navigator.clipboard.writeText(
-      JSON.stringify(JSON.parse(job.result), null, 2)
+      JSON.stringify(JSON.parse(job.result), null, 2),
     );
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -97,8 +93,7 @@ export default function ExtractPage() {
 
   const canExtract =
     selectedDocId !== "" && selectedSchemaId !== "" && !extracting;
-  const isRunning =
-    job?.status === "pending" || job?.status === "processing";
+  const isRunning = job?.status === "pending" || job?.status === "processing";
 
   return (
     <div>
@@ -177,11 +172,7 @@ export default function ExtractPage() {
                     <StatusBadge status={job.status} />
                   </div>
                   {job.status === "completed" && job.result && (
-                    <Button
-                      variant="ghost"
-                      size="icon-sm"
-                      onClick={copyResult}
-                    >
+                    <Button variant="ghost" size="icon-sm" onClick={copyResult}>
                       {copied ? (
                         <Check className="size-4 text-emerald-400" />
                       ) : (

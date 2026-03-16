@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Braces } from "lucide-react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { EmptyState } from "@/components/empty-state";
+import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,8 +26,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { PageHeader } from "@/components/page-header";
-import { EmptyState } from "@/components/empty-state";
 import { api, type Schema } from "@/lib/api/client";
 
 const FIELD_TYPES = [
@@ -60,7 +60,7 @@ export default function SchemasPage() {
       setSchemas(await api.schemas.list());
     } catch (err) {
       toast.error(
-        err instanceof Error ? err.message : "Failed to load schemas"
+        err instanceof Error ? err.message : "Failed to load schemas",
       );
     } finally {
       setLoading(false);
@@ -81,7 +81,7 @@ export default function SchemasPage() {
 
   function updateField(i: number, key: keyof FieldRow, value: string) {
     setFields((prev) =>
-      prev.map((f, idx) => (idx === i ? { ...f, [key]: value } : f))
+      prev.map((f, idx) => (idx === i ? { ...f, [key]: value } : f)),
     );
   }
 
@@ -105,7 +105,7 @@ export default function SchemasPage() {
       await loadSchemas();
     } catch (err) {
       toast.error(
-        err instanceof Error ? err.message : "Failed to create schema"
+        err instanceof Error ? err.message : "Failed to create schema",
       );
     } finally {
       setSaving(false);
@@ -122,7 +122,7 @@ export default function SchemasPage() {
       await loadSchemas();
     } catch (err) {
       toast.error(
-        err instanceof Error ? err.message : "Failed to delete schema"
+        err instanceof Error ? err.message : "Failed to delete schema",
       );
     } finally {
       setDeleting(false);

@@ -32,9 +32,9 @@ High-level feature tracker for docminer.
 - [x] Schemas page (list, create, delete)
 - [x] Extract page (document/schema selection, job polling)
 - [x] Hand-written typed API client
-- [ ] **UI foundation** — dark theme, violet palette, sidebar with icons, shared components (design: `docs/plans/2026-03-16-ui-foundation-design.md`)
-- [ ] **Dashboard page** — onboarding flow (empty), stats + recent extractions (populated)
-- [ ] **Page rebuilds** — Documents, Schemas, Extract pages with shadcn components, toasts, skeletons, empty states
+- [x] **UI foundation** — dark theme, violet palette, sidebar with icons, shared components (design: `docs/plans/2026-03-16-ui-foundation-design.md`)
+- [x] **Dashboard page** — onboarding flow (empty), stats + recent extractions (populated)
+- [x] **Page rebuilds** — Documents, Schemas, Extract pages with shadcn components, toasts, skeletons, empty states
 - [ ] **Document preview** — display uploaded document (image/PDF) in extract results view
 - [ ] **Results side-by-side view** — document on left, extracted JSON on right
 - [ ] **OpenAPI codegen** — replace hand-written client with generated typed client (`make codegen`)
