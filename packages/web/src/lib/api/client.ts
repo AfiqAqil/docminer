@@ -37,6 +37,7 @@ export const api = {
       request<void>(`/schemas/${id}`, { method: "DELETE" }),
   },
   extract: {
+    list: () => request<ExtractionJob[]>("/extract"),
     start: (document_id: number, schema_id: number) =>
       request<ExtractionJob>("/extract", {
         method: "POST",

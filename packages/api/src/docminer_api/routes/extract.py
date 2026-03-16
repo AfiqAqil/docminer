@@ -5,7 +5,7 @@ from collections.abc import AsyncGenerator
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
 from pydantic import BaseModel
-from sqlmodel import Session
+from sqlmodel import Session, select
 from sse_starlette.sse import EventSourceResponse
 
 from docminer_api.database import get_session
@@ -35,6 +35,17 @@ def start_extraction(
     session.refresh(job)
     background_tasks.add_task(run_extraction, job.id)
     return job
+
+
+@router.get("", response_model=list[ExtractionJob])
+def list_extractions(
+    session: Session = Depends(get_session),
+) -> list[ExtractionJob]:
+    return list(
+        session.exec(
+            select(ExtractionJob).order_by(ExtractionJob.created_at.desc())
+        ).all()
+    )
 
 
 @router.get("/{job_id}", response_model=ExtractionJob)

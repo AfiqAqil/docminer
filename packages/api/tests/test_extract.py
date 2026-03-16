@@ -98,6 +98,26 @@ def test_extraction_completes_successfully(
     assert result_dict["total"] == 99.99
 
 
+def test_list_extractions(client: TestClient, tmp_path, monkeypatch):
+    doc_id = _upload_doc(client, tmp_path, monkeypatch)
+    schema_id = _create_schema(client)
+
+    client.post("/extract", json={"document_id": doc_id, "schema_id": schema_id})
+    client.post("/extract", json={"document_id": doc_id, "schema_id": schema_id})
+
+    response = client.get("/extract")
+    assert response.status_code == 200
+    data = response.json()
+    assert isinstance(data, list)
+    assert len(data) >= 2
+
+
+def test_list_extractions_empty(client: TestClient):
+    response = client.get("/extract")
+    assert response.status_code == 200
+    assert response.json() == []
+
+
 def test_extraction_fails_on_extractor_error(
     client: TestClient, tmp_path, monkeypatch
 ):
