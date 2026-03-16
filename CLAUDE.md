@@ -2,16 +2,15 @@
 
 ## Project
 
-**docminer** — Schema-driven document extraction powered by Docling and LLMs.
+**docminer** — Schema-driven document extraction web app powered by Docling and LLMs.
 
-Monorepo with three packages:
-- `packages/core` — Python library (`pip install docminer`). Uses Docling + litellm.
-- `packages/api` — FastAPI backend. Depends on core.
-- `packages/web` — Next.js frontend. Consumes API via typed OpenAPI client.
+Two top-level directories:
+- `backend/` — FastAPI + extraction engine. Single Python package (`docminer_api`).
+- `frontend/` — Next.js UI. Consumes API via typed OpenAPI client.
 
 ## Tech Stack
 
-- **Python 3.12+**, **uv** (workspaces), **Pydantic**, **Docling**, **litellm**
+- **Python 3.12+**, **uv**, **Pydantic**, **Docling**, **litellm**
 - **FastAPI**, **SQLModel**, **SQLite**
 - **Next.js 15** (App Router), **Tailwind CSS**, **shadcn/ui**, **pnpm**
 - **Ruff** (Python lint/format), **Biome** (TS lint/format)
@@ -26,11 +25,11 @@ make test         # Run all Python tests
 make lint         # Ruff + Biome check
 make format       # Ruff + Biome format
 make codegen      # Regenerate TS API client from OpenAPI spec
-uv run pytest packages/core/tests -v          # Core tests only
-uv run pytest packages/api/tests -v           # API tests only
-uv run pytest path/to/test.py::test_name -v   # Single test
-uv sync           # Sync Python dependencies
-cd packages/web && pnpm install               # Sync frontend dependencies
+uv run pytest backend/tests/test_extraction -v   # Extraction tests only
+uv run pytest backend/tests/test_api -v          # API tests only
+uv run pytest path/to/test.py::test_name -v      # Single test
+uv sync                                          # Sync Python dependencies
+cd frontend && pnpm install                      # Sync frontend dependencies
 ```
 
 ## Code Conventions
@@ -46,16 +45,16 @@ Conventional Commits. Format: `type(scope): description`
 
 | Type | When |
 |---|---|
-| `feat(core)` | New feature in core library |
-| `feat(api)` | New feature in API |
+| `feat(api)` | New feature in backend |
 | `feat(web)` | New feature in frontend |
 | `fix(scope)` | Bug fix |
 | `test(scope)` | Adding/updating tests |
 | `chore` | Tooling, config, deps |
 | `docs` | Documentation only |
+| `refactor` | Code restructuring |
 
 Examples:
-- `feat(core): add schema validation retry logic`
+- `feat(api): add schema validation retry logic`
 - `fix(api): handle missing document file on extraction`
 - `chore: configure Ruff and Biome`
 
@@ -93,7 +92,7 @@ Use the correct tier and invoke the matching skills:
 ## Testing
 
 - **TDD always.** Write failing test first, then implement.
-- **Core:** pytest. Mock litellm responses — don't call real LLMs in tests.
+- **Extraction:** pytest. Mock litellm responses — don't call real LLMs in tests.
 - **API:** pytest + FastAPI `TestClient`. In-memory SQLite for test DB.
 - **Frontend:** Deferred (Playwright e2e later).
 - Run `make test` before every commit.
@@ -111,6 +110,24 @@ Use the correct tier and invoke the matching skills:
 - **uv workspace:** always run `uv run` commands from repo root, not from package dirs
 - **OpenAPI codegen:** API server must be running for `make codegen` to fetch the spec
 - **pnpm** is not installed globally by default — run `npm install -g pnpm` on fresh setup
+
+## Backend Structure
+
+```
+backend/src/docminer_api/
+├── app.py              # FastAPI factory
+├── config.py           # Settings
+├── database.py         # SQLite session
+├── models/             # SQLModel tables (document, schema, extraction)
+├── routes/             # API endpoints (documents, schemas, extract)
+├── services/           # Business logic (extraction_service)
+└── extraction/         # Core extraction engine
+    ├── extractor.py    # Docling + LLM orchestration
+    ├── llm.py          # litellm wrapper
+    ├── schema.py       # Pydantic utilities
+    ├── result.py       # ExtractionResult
+    └── exceptions.py   # Custom exceptions
+```
 
 ## Frontend Conventions
 

@@ -213,5 +213,5 @@ __marimo__/
 data/
 node_modules/
 .next/
-packages/web/src/lib/api/generated/
-!packages/web/src/lib/
+frontend/src/lib/api/generated/
+!frontend/src/lib/

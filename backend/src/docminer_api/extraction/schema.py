@@ -3,7 +3,7 @@ from typing import Any
 
 from pydantic import BaseModel, create_model
 
-from docminer.exceptions import SchemaError
+from docminer_api.extraction.exceptions import SchemaError
 
 _TYPE_MAP: dict[str, type] = {
     "str": str,
@@ -48,9 +48,7 @@ def _resolve_field(field_name: str, field_type: Any) -> Any:
             )
         return (_resolve_type_str(field_name, field_type), ...)
 
-    raise SchemaError(
-        f"Unsupported field definition for '{field_name}': {field_type}"
-    )
+    raise SchemaError(f"Unsupported field definition for '{field_name}': {field_type}")
 
 
 def _resolve_type_str(field_name: str, type_str: str) -> type:

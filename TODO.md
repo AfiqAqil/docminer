@@ -4,7 +4,7 @@ High-level feature tracker for docminer.
 
 ---
 
-## Phase 1 — Core Library (v0.1) — NEEDS REWORK
+## Phase 1 — Extraction Engine — NEEDS REWORK
 
 > **Architecture change (2026-03-17):** Switching from vision LLM to Docling + text LLM pipeline.
 > See `docs/research/2026-03-17-extraction-landscape.md` for rationale.
@@ -14,14 +14,17 @@ High-level feature tracker for docminer.
 - [x] Schema utilities (`from_dict`, `schema_to_prompt`)
 - [x] LLM wrapper (litellm integration, prompt construction)
 - [x] `Extractor` class with validation + retry logic
-- [x] Unit tests for all core modules (17 tests)
+- [x] Unit tests for extraction modules
 - [ ] **Docling integration** — replace vision LLM calls with Docling (document -> markdown) + text LLM (markdown -> structured JSON)
 - [ ] **Multi-format support** — PDF, DOCX, PPTX, XLSX, HTML, images via Docling
 - [ ] **Multi-page PDF support** — Docling handles full documents natively
 - [ ] **Structured output mode** — use litellm `response_format` for JSON mode
 - [ ] **Update tests** — adapt existing tests for new Docling + text LLM pipeline
 
-## Phase 2 — Web App (v0.2) — IN PROGRESS
+## Phase 2 — Web App — IN PROGRESS
+
+> **Refactor (2026-03-17):** Restructured from `packages/{core,api,web}` to `backend/` + `frontend/`.
+> Core library merged into backend as `docminer_api.extraction` module.
 
 ### API (FastAPI) — DONE
 
@@ -31,7 +34,7 @@ High-level feature tracker for docminer.
 - [x] Extraction endpoints with background processing
 - [x] SSE streaming for job progress
 - [x] CORS and dev environment wiring
-- [x] Integration tests (38 tests)
+- [x] Integration tests
 
 ### Frontend (Next.js) — IN PROGRESS
 
@@ -48,17 +51,15 @@ High-level feature tracker for docminer.
 - [ ] **OpenAPI codegen** — replace hand-written client with generated typed client (`make codegen`)
 - [ ] **Inline schema creation** — create schema directly from extract page (not just pick existing)
 
-## Phase 3 — Polish & Publish (v0.3) — NOT STARTED
+## Phase 3 — Polish & Publish — NOT STARTED
 
-- [ ] **README polish** — usage examples for both library and web app, screenshots
-- [ ] **PyPI packaging** — publish `docminer` core to PyPI
+- [ ] **README polish** — usage examples, screenshots
 - [ ] **Docker Compose** — single command self-hosting (`docker compose up`)
 - [ ] **CI/CD** — GitHub Actions for test + lint on PRs
 - [ ] **`make setup` command** — one-command dev environment setup (currently referenced in README but not implemented)
 
 ## Future — Backlog
 
-- [ ] CLI (`docminer extract file.pdf --schema schema.json`)
 - [ ] Batch extraction (multiple documents in one job)
 - [ ] Schema versioning and migration
 - [ ] Document delete endpoint + UI

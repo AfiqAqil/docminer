@@ -3,7 +3,7 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
-from docminer.llm import build_messages, call_llm
+from docminer_api.extraction.llm import build_messages, call_llm
 from pydantic import BaseModel
 
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -43,7 +43,7 @@ class TestBuildMessages:
 
 
 class TestCallLlm:
-    @patch("docminer.llm.completion")
+    @patch("docminer_api.extraction.llm.completion")
     def test_returns_raw_text_and_usage(self, mock_completion: MagicMock) -> None:
         mock_choice = MagicMock()
         mock_choice.message.content = '{"invoice_number": "INV-001"}'
@@ -63,7 +63,7 @@ class TestCallLlm:
             "total_tokens": 120,
         }
 
-    @patch("docminer.llm.completion")
+    @patch("docminer_api.extraction.llm.completion")
     def test_passes_correct_model_string(self, mock_completion: MagicMock) -> None:
         mock_choice = MagicMock()
         mock_choice.message.content = "{}"

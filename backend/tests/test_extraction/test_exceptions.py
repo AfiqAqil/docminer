@@ -1,7 +1,11 @@
 """Tests for custom exception classes."""
 
 import pytest
-from docminer.exceptions import ExtractionError, SchemaError, ValidationError
+from docminer_api.extraction.exceptions import (
+    ExtractionError,
+    SchemaError,
+    ValidationError,
+)
 
 
 class TestExtractionError:

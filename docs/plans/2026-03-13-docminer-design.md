@@ -5,7 +5,7 @@
 
 ## Overview
 
-Python library + web app for schema-driven document extraction. Messy document (PDF/DOCX/image) + Pydantic schema in, clean structured JSON out.
+Web app for schema-driven document extraction. Messy document (PDF/DOCX/image) + Pydantic schema in, clean structured JSON out.
 
 Uses [Docling](https://github.com/DS4SD/docling) (IBM) for document-to-markdown conversion, then LLMs for schema-driven extraction from the parsed text. Docling runs locally with no API cost; the LLM only processes text, not images.
 
@@ -17,7 +17,7 @@ Based on "Page" — a production system built at MindHive deployed across educat
 
 | Component | Choice |
 |---|---|
-| Package manager | uv (workspaces) |
+| Package manager | uv |
 | Python version | 3.12+ |
 | Schema format | Pydantic models (with `from_dict()` utility) |
 | Document processing | Docling (PDF, DOCX, PPTX, XLSX, HTML, images -> markdown) |
@@ -34,45 +34,44 @@ Based on "Page" — a production system built at MindHive deployed across educat
 | TS linting | Biome |
 | Frontend package manager | pnpm |
 
-## Monorepo Structure
+## Project Structure
+
+> **Refactored (2026-03-17):** Simplified from three-package monorepo (`packages/{core,api,web}`) to two top-level directories. Core library merged into backend as `docminer_api.extraction` module.
 
 ```
 docminer/
-├── packages/
-│   ├── core/                    # pip install docminer
-│   │   ├── pyproject.toml
-│   │   └── src/
-│   │       └── docminer/
-│   │           ├── __init__.py          # exports Extractor, ExtractionResult
-│   │           ├── extractor.py         # Extractor class (main entry point)
-│   │           ├── llm.py               # litellm wrapper, prompt construction
-│   │           ├── schema.py            # Pydantic model utilities, from_dict()
-│   │           ├── result.py            # ExtractionResult dataclass
-│   │           └── exceptions.py        # Custom exceptions
-│   │
-│   ├── api/                     # FastAPI backend
-│   │   ├── pyproject.toml       # depends on docminer (core)
-│   │   └── src/
-│   │       └── docminer_api/
-│   │           ├── __init__.py
-│   │           ├── app.py               # FastAPI app factory
-│   │           ├── routes/
-│   │           │   ├── extract.py       # extraction endpoints
-│   │           │   ├── schemas.py       # schema CRUD endpoints
-│   │           │   └── documents.py     # document upload/list endpoints
-│   │           ├── models.py            # SQLModel database models
-│   │           ├── database.py          # SQLite connection/session
-│   │           └── services.py          # Business logic bridging API <> core
-│   │
-│   └── web/                     # Next.js frontend
-│       ├── package.json
-│       ├── next.config.js
-│       ├── src/
-│       │   ├── app/                     # App Router
-│       │   ├── components/
-│       │   └── lib/
-│       │       └── api/                 # Generated typed API client
-│       └── openapi-codegen.config.ts
+├── backend/
+│   ├── pyproject.toml
+│   └── src/
+│       └── docminer_api/
+│           ├── app.py                   # FastAPI app factory
+│           ├── config.py                # Pydantic Settings
+│           ├── database.py              # SQLite connection/session
+│           ├── models/                  # SQLModel tables
+│           │   ├── document.py
+│           │   ├── schema.py
+│           │   └── extraction.py
+│           ├── routes/                  # API endpoints
+│           │   ├── documents.py
+│           │   ├── schemas.py
+│           │   └── extract.py
+│           ├── services/                # Business logic
+│           │   └── extraction_service.py
+│           └── extraction/              # Core extraction engine
+│               ├── extractor.py         # Extractor class (main entry point)
+│               ├── llm.py               # litellm wrapper, prompt construction
+│               ├── schema.py            # Pydantic model utilities, from_dict()
+│               ├── result.py            # ExtractionResult dataclass
+│               └── exceptions.py        # Custom exceptions
+│
+├── frontend/                    # Next.js frontend
+│   ├── package.json
+│   ├── next.config.ts
+│   └── src/
+│       ├── app/                         # App Router
+│       ├── components/
+│       └── lib/
+│           └── api/                     # Typed API client
 │
 ├── pyproject.toml               # uv workspace root
 ├── uv.lock
@@ -81,32 +80,13 @@ docminer/
 └── README.md
 ```
 
-- **uv workspaces** at the root ties core and api together.
+- **uv** at the root points to `backend/` as a workspace member.
 - **pnpm** manages the Next.js frontend separately.
-- Core has zero web dependencies. API depends on core as a workspace dependency.
+- Extraction engine lives inside the backend — no separate library package.
 
-## Core Library API
+## Extraction Engine
 
-### Extractor
-
-```python
-from docminer import Extractor, ExtractionResult
-from pydantic import BaseModel
-
-class Invoice(BaseModel):
-    invoice_no: str
-    date: str
-    total: float
-    line_items: list[dict[str, str]]
-
-extractor = Extractor(model="ollama/llama3.2-vision")
-result: ExtractionResult = extractor.extract("invoice.pdf", schema=Invoice)
-
-result.data        # validated Invoice instance
-result.raw         # raw LLM response string
-result.confidence  # optional confidence score (0-1)
-result.usage       # token usage stats from litellm
-```
+The extraction engine lives in `backend/src/docminer_api/extraction/` and provides the core document-to-JSON pipeline.
 
 ### Key decisions
 
@@ -114,23 +94,7 @@ result.usage       # token usage stats from litellm
 - **`model` param** uses litellm's model string format (e.g. `"ollama/llama3.2"`, `"gpt-4o"`). Vision models are no longer required since Docling handles the visual parsing.
 - **`extract()` accepts `str | Path | bytes`** — file paths or in-memory data. Docling detects file type and converts to markdown.
 - **Validation is automatic** — LLM response parsed and validated against schema. On validation failure, retries once with the error fed back to the LLM. Raises `ExtractionError` if retry also fails.
-
-### Schema utility
-
-```python
-from docminer.schema import from_dict
-
-schema = from_dict({
-    "invoice_no": "str",
-    "date": "str",
-    "total": "float",
-    "line_items": [{"description": "str", "amount": "float"}]
-})
-
-result = extractor.extract("invoice.pdf", schema=schema)
-```
-
-Convenience function for users who don't want to define Pydantic models manually. Not part of the core `Extractor` API.
+- **Schema utility** — `from_dict()` creates dynamic Pydantic models from plain dicts, used by the API to convert user-defined schemas into extraction targets.
 
 ## FastAPI Backend
 
@@ -216,7 +180,7 @@ class ExtractionJob(SQLModel, table=True):
 ### Dev workflow
 
 - `make dev` — starts FastAPI + Next.js dev servers
-- `make test` — runs pytest across core and api
+- `make test` — runs pytest on backend tests
 - `make codegen` — regenerates TypeScript API client from OpenAPI spec
 
 ### Linting & formatting
@@ -226,13 +190,13 @@ class ExtractionJob(SQLModel, table=True):
 
 ### Testing strategy
 
-- **Core** — unit tests with pytest. Mock litellm responses. Test schema generation, validation, retry logic.
-- **API** — integration tests with pytest + FastAPI TestClient.
+- **Extraction** — unit tests with pytest. Mock litellm responses. Test schema generation, validation, retry logic.
+- **API** — integration tests with pytest + FastAPI TestClient. In-memory SQLite.
 - **Frontend** — deferred. Playwright e2e tests later if needed.
 
 ### Configuration
 
-- Core: constructor args (`Extractor(model=..., temperature=...)`)
+- Extractor: constructor args (`Extractor(model=..., temperature=...)`)
 - API: environment variables via Pydantic Settings:
   - `DOCMINER_MODEL` — default LLM model string
   - `DOCMINER_DB_URL` — SQLite path (default: `data/docminer.db`)

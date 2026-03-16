@@ -3,10 +3,10 @@ from __future__ import annotations
 import json
 from datetime import UTC, datetime
 
-from docminer import Extractor
-from docminer.schema import from_dict
 from sqlmodel import Session
 
+from docminer_api.extraction import Extractor
+from docminer_api.extraction.schema import from_dict
 from docminer_api.models import Document, ExtractionJob, Schema
 
 

@@ -1,8 +1,8 @@
 import json
 
 import pytest
-from docminer.exceptions import SchemaError
-from docminer.schema import from_dict, schema_to_prompt
+from docminer_api.extraction.exceptions import SchemaError
+from docminer_api.extraction.schema import from_dict, schema_to_prompt
 from pydantic import BaseModel
 
 

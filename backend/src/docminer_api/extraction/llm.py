@@ -4,7 +4,7 @@ from typing import Any
 from litellm import completion
 from pydantic import BaseModel
 
-from docminer.schema import schema_to_prompt
+from docminer_api.extraction.schema import schema_to_prompt
 
 _SYSTEM_PROMPT = """You are a document data extraction assistant.
 Extract structured data from the provided document image according to this JSON schema:

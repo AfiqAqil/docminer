@@ -9,9 +9,9 @@ from typing import Any
 from pydantic import BaseModel
 from pydantic import ValidationError as PydanticValidationError
 
-from docminer.exceptions import ExtractionError
-from docminer.llm import build_messages, call_llm
-from docminer.result import ExtractionResult
+from docminer_api.extraction.exceptions import ExtractionError
+from docminer_api.extraction.llm import build_messages, call_llm
+from docminer_api.extraction.result import ExtractionResult
 
 _MIME_MAP: dict[str, str] = {
     ".png": "image/png",

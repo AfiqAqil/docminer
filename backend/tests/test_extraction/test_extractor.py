@@ -7,9 +7,9 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
-from docminer.exceptions import ExtractionError
-from docminer.extractor import Extractor
-from docminer.result import ExtractionResult
+from docminer_api.extraction.exceptions import ExtractionError
+from docminer_api.extraction.extractor import Extractor
+from docminer_api.extraction.result import ExtractionResult
 from pydantic import BaseModel
 
 
@@ -33,7 +33,7 @@ INVALID_JSON = json.dumps({"total": 42.99})  # missing required 'store'
 
 
 class TestExtractFromBytes:
-    @patch("docminer.llm.completion")
+    @patch("docminer_api.extraction.llm.completion")
     def test_successful_extraction(self, mock_comp: MagicMock) -> None:
         mock_comp.return_value = _mock_completion(VALID_JSON)
         extractor = Extractor(model="gpt-4o")
@@ -47,7 +47,7 @@ class TestExtractFromBytes:
         assert result.usage is not None
         assert result.usage["total_tokens"] == 80
 
-    @patch("docminer.llm.completion")
+    @patch("docminer_api.extraction.llm.completion")
     def test_uses_default_mime_for_bytes(self, mock_comp: MagicMock) -> None:
         mock_comp.return_value = _mock_completion(VALID_JSON)
         extractor = Extractor(model="gpt-4o")
@@ -57,7 +57,7 @@ class TestExtractFromBytes:
 
 
 class TestExtractFromFilePath:
-    @patch("docminer.llm.completion")
+    @patch("docminer_api.extraction.llm.completion")
     def test_from_pathlib_path(self, mock_comp: MagicMock, tmp_path: Path) -> None:
         fake_file = tmp_path / "receipt.png"
         fake_file.write_bytes(b"fake-png-data")
@@ -69,7 +69,7 @@ class TestExtractFromFilePath:
         assert isinstance(result, ExtractionResult)
         assert result.data.store == "Walmart"
 
-    @patch("docminer.llm.completion")
+    @patch("docminer_api.extraction.llm.completion")
     def test_from_string_path(self, mock_comp: MagicMock, tmp_path: Path) -> None:
         fake_file = tmp_path / "receipt.jpg"
         fake_file.write_bytes(b"fake-jpg-data")
@@ -83,7 +83,7 @@ class TestExtractFromFilePath:
 
 
 class TestRetryOnValidationError:
-    @patch("docminer.llm.completion")
+    @patch("docminer_api.extraction.llm.completion")
     def test_retry_succeeds_on_second_call(self, mock_comp: MagicMock) -> None:
         mock_comp.side_effect = [
             _mock_completion(INVALID_JSON),
@@ -96,7 +96,7 @@ class TestRetryOnValidationError:
         assert isinstance(result.data, Receipt)
         assert result.data.store == "Walmart"
 
-    @patch("docminer.llm.completion")
+    @patch("docminer_api.extraction.llm.completion")
     def test_raises_after_retry_exhausted(self, mock_comp: MagicMock) -> None:
         mock_comp.side_effect = [
             _mock_completion(INVALID_JSON),

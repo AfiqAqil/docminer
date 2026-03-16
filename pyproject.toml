@@ -1,17 +1,16 @@
 [project]
-name = "docminer-workspace"
-version = "0.0.0"
+name = "docminer"
+version = "0.1.0"
 requires-python = ">=3.12"
 
 [dependency-groups]
-dev = ["pytest>=8.0", "ruff>=0.8", "docminer", "docminer-api"]
+dev = ["pytest>=8.0", "ruff>=0.8", "docminer-api"]
 
 [tool.uv.sources]
-docminer = { workspace = true }
 docminer-api = { workspace = true }
 
 [tool.uv.workspace]
-members = ["packages/core", "packages/api"]
+members = ["backend"]
 
 [tool.ruff]
 line-length = 88
@@ -21,5 +20,5 @@ target-version = "py312"
 select = ["E", "F", "I", "UP"]
 
 [tool.pytest.ini_options]
-testpaths = ["packages/core/tests", "packages/api/tests"]
+testpaths = ["backend/tests"]
 addopts = ["--import-mode=importlib"]

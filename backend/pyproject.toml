@@ -1,11 +1,12 @@
 [project]
 name = "docminer-api"
 version = "0.1.0"
-description = "FastAPI backend for docminer"
+description = "Schema-driven document extraction web app"
 requires-python = ">=3.12"
 license = "MIT"
 dependencies = [
-    "docminer",
+    "pydantic>=2.0",
+    "litellm>=1.0",
     "fastapi>=0.115",
     "uvicorn[standard]>=0.34",
     "sqlmodel>=0.0.22",
@@ -14,9 +15,6 @@ dependencies = [
     "sse-starlette>=2.0",
     "pydantic-settings>=2.0",
 ]
-
-[tool.uv.sources]
-docminer = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]
