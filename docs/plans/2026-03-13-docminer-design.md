@@ -5,9 +5,13 @@
 
 ## Overview
 
-Python library + web app for schema-driven document extraction. Messy document (image/PDF) + Pydantic schema in, clean structured JSON out.
+Python library + web app for schema-driven document extraction. Messy document (PDF/DOCX/image) + Pydantic schema in, clean structured JSON out.
+
+Uses [Docling](https://github.com/DS4SD/docling) (IBM) for document-to-markdown conversion, then LLMs for schema-driven extraction from the parsed text. Docling runs locally with no API cost; the LLM only processes text, not images.
 
 Based on "Page" — a production system built at MindHive deployed across education, logistics, and F&B.
+
+> **Architecture decision (2026-03-17):** After researching the extraction landscape (see `docs/research/2026-03-17-extraction-landscape.md`), we chose Docling as the document processing layer + our own LLM extraction logic. LangExtract was considered but rejected due to incompatible schema model (few-shot examples vs our Pydantic approach). Zerox was considered but rejected — same stack as ours (litellm + pdf2image), doesn't add enough value as a dependency.
 
 ## Tech Stack
 
@@ -16,9 +20,9 @@ Based on "Page" — a production system built at MindHive deployed across educat
 | Package manager | uv (workspaces) |
 | Python version | 3.12+ |
 | Schema format | Pydantic models (with `from_dict()` utility) |
+| Document processing | Docling (PDF, DOCX, PPTX, XLSX, HTML, images -> markdown) |
 | LLM integration | litellm (Ollama for local dev) |
-| OCR/parsing | LLM-native multimodal (OCR deferred as optional extras) |
-| Preprocessing | Deferred as optional extras |
+| Extraction mode | Text LLM (markdown input from Docling, not vision) |
 | Testing | pytest |
 | Backend framework | FastAPI |
 | ORM | SQLModel |
@@ -106,8 +110,9 @@ result.usage       # token usage stats from litellm
 
 ### Key decisions
 
-- **`model` param** uses litellm's model string format (e.g. `"ollama/llama3.2-vision"`, `"gpt-4o"`).
-- **`extract()` accepts `str | Path | bytes`** — file paths or in-memory data. Detects file type and prepares appropriate LLM message.
+- **Docling preprocessing** — Documents are first converted to markdown by Docling (runs locally, no API cost). The LLM receives structured text, not raw images. This supports PDF, DOCX, PPTX, XLSX, HTML, and images.
+- **`model` param** uses litellm's model string format (e.g. `"ollama/llama3.2"`, `"gpt-4o"`). Vision models are no longer required since Docling handles the visual parsing.
+- **`extract()` accepts `str | Path | bytes`** — file paths or in-memory data. Docling detects file type and converts to markdown.
 - **Validation is automatic** — LLM response parsed and validated against schema. On validation failure, retries once with the error fed back to the LLM. Raises `ExtractionError` if retry also fails.
 
 ### Schema utility

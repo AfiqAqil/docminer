@@ -2,16 +2,16 @@
 
 ## Project
 
-**docminer** — Schema-driven document extraction from images/PDFs using multimodal LLMs.
+**docminer** — Schema-driven document extraction powered by Docling and LLMs.
 
 Monorepo with three packages:
-- `packages/core` — Python library (`pip install docminer`). Zero web deps.
+- `packages/core` — Python library (`pip install docminer`). Uses Docling + litellm.
 - `packages/api` — FastAPI backend. Depends on core.
 - `packages/web` — Next.js frontend. Consumes API via typed OpenAPI client.
 
 ## Tech Stack
 
-- **Python 3.12+**, **uv** (workspaces), **Pydantic**, **litellm**
+- **Python 3.12+**, **uv** (workspaces), **Pydantic**, **Docling**, **litellm**
 - **FastAPI**, **SQLModel**, **SQLite**
 - **Next.js 15** (App Router), **Tailwind CSS**, **shadcn/ui**, **pnpm**
 - **Ruff** (Python lint/format), **Biome** (TS lint/format)
@@ -105,6 +105,7 @@ Use the correct tier and invoke the matching skills:
 
 ## Gotchas
 
+- **Docling** handles document-to-markdown conversion (PDF, DOCX, PPTX, XLSX, HTML, images). LLM receives text, not images.
 - **litellm model strings** are provider-prefixed: `ollama/llama3.2-vision`, not `llama3.2-vision`
 - **SQLModel `Schema` table** may conflict with SQLAlchemy internals — use explicit `__tablename__` if issues arise
 - **uv workspace:** always run `uv run` commands from repo root, not from package dirs
@@ -126,4 +127,5 @@ Use the correct tier and invoke the matching skills:
 
 - `docs/plans/2026-03-13-docminer-design.md` — approved design document
 - `docs/plans/2026-03-16-ui-foundation-design.md` — approved UI foundation design
+- `docs/research/2026-03-17-extraction-landscape.md` — extraction library landscape research
 - `TODO.md` — feature tracker and project status

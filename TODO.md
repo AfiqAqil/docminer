@@ -4,7 +4,10 @@ High-level feature tracker for docminer.
 
 ---
 
-## Phase 1 — Core Library (v0.1) — DONE
+## Phase 1 — Core Library (v0.1) — NEEDS REWORK
+
+> **Architecture change (2026-03-17):** Switching from vision LLM to Docling + text LLM pipeline.
+> See `docs/research/2026-03-17-extraction-landscape.md` for rationale.
 
 - [x] Custom exceptions (`ExtractionError`, `ValidationError`, `SchemaError`)
 - [x] `ExtractionResult` dataclass
@@ -12,6 +15,11 @@ High-level feature tracker for docminer.
 - [x] LLM wrapper (litellm integration, prompt construction)
 - [x] `Extractor` class with validation + retry logic
 - [x] Unit tests for all core modules (17 tests)
+- [ ] **Docling integration** — replace vision LLM calls with Docling (document -> markdown) + text LLM (markdown -> structured JSON)
+- [ ] **Multi-format support** — PDF, DOCX, PPTX, XLSX, HTML, images via Docling
+- [ ] **Multi-page PDF support** — Docling handles full documents natively
+- [ ] **Structured output mode** — use litellm `response_format` for JSON mode
+- [ ] **Update tests** — adapt existing tests for new Docling + text LLM pipeline
 
 ## Phase 2 — Web App (v0.2) — IN PROGRESS
 
@@ -50,11 +58,12 @@ High-level feature tracker for docminer.
 
 ## Future — Backlog
 
-- [ ] OCR backends as optional extras (Docling, Tesseract)
-- [ ] Image preprocessing (deskew, normalize) as optional extras
 - [ ] CLI (`docminer extract file.pdf --schema schema.json`)
 - [ ] Batch extraction (multiple documents in one job)
 - [ ] Schema versioning and migration
 - [ ] Document delete endpoint + UI
 - [ ] Extraction history page (list all past jobs with filters)
 - [ ] Export results (CSV, Excel)
+- [ ] Cost tracking per extraction (token usage + estimated cost)
+- [ ] Confidence scores / source grounding per field
+- [ ] Multi-model routing (cheap model for simple fields, powerful for complex)

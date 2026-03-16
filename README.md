@@ -1,10 +1,12 @@
 # docminer
 
-Schema-driven document extraction from images and PDFs using multimodal LLMs. Messy document + Pydantic schema in, clean structured JSON out.
+Schema-driven document extraction powered by Docling and LLMs. Messy document + Pydantic schema in, clean structured JSON out.
 
 ## What is docminer?
 
-docminer is a Python library and web app that extracts structured data from documents (invoices, receipts, certificates, shipping docs) by sending them to multimodal LLMs with a schema that defines what to extract. No OCR setup required — the LLM handles it natively.
+docminer is a Python library and web app that extracts structured data from documents (invoices, receipts, certificates, shipping docs). It uses [Docling](https://github.com/DS4SD/docling) (IBM) to convert documents into clean markdown, then sends that text to an LLM with a Pydantic schema to extract exactly the fields you need.
+
+Supports PDF, DOCX, PPTX, XLSX, HTML, and images out of the box — Docling handles the parsing, the LLM handles the understanding.
 
 Based on "Page" — a production system deployed across education, logistics, and F&B.
 
@@ -66,12 +68,15 @@ Open `http://localhost:3000` — upload a document, define a schema, extract str
 ## How It Works
 
 ```
-Input (image/PDF)
-  -> Multimodal LLM (via litellm: Ollama, OpenAI, Anthropic, etc.)
+Input (PDF, DOCX, PPTX, XLSX, HTML, image)
+  -> Docling (document -> structured markdown, runs locally)
+  -> LLM (via litellm: Ollama, OpenAI, Anthropic, etc.)
   -> Validation (Pydantic schema)
   -> Retry with error feedback (if validation fails)
   -> ExtractionResult (validated data + metadata)
 ```
+
+Docling runs locally with no API cost. The LLM only processes text (not images), making extraction significantly cheaper than vision-based approaches.
 
 ## Project Structure
 
@@ -83,7 +88,7 @@ docminer/
     web/      Next.js frontend
 ```
 
-- **core** — standalone library, zero web dependencies
+- **core** — standalone library. Uses Docling for document processing, litellm for LLM calls.
 - **api** — wraps core with persistence, file management, job tracking
 - **web** — dark-themed UI for uploading documents, managing schemas, viewing extraction results
 
