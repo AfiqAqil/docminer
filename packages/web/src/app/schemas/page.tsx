@@ -1,9 +1,31 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Braces } from "lucide-react";
+import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { PageHeader } from "@/components/page-header";
+import { EmptyState } from "@/components/empty-state";
 import { api, type Schema } from "@/lib/api/client";
 
 const FIELD_TYPES = [
@@ -25,20 +47,21 @@ interface FieldRow {
 export default function SchemasPage() {
   const [schemas, setSchemas] = useState<Schema[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [showForm, setShowForm] = useState(false);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<Schema | null>(null);
   const [schemaName, setSchemaName] = useState("");
   const [fields, setFields] = useState<FieldRow[]>([{ name: "", type: "str" }]);
   const [saving, setSaving] = useState(false);
-  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   async function loadSchemas() {
     try {
       setLoading(true);
-      setError(null);
       setSchemas(await api.schemas.list());
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load schemas");
+      toast.error(
+        err instanceof Error ? err.message : "Failed to load schemas"
+      );
     } finally {
       setLoading(false);
     }
@@ -69,111 +92,164 @@ export default function SchemasPage() {
       if (f.name.trim()) definition[f.name.trim()] = f.type;
     }
     if (!schemaName.trim() || Object.keys(definition).length === 0) {
-      setError("Schema name and at least one field are required.");
+      toast.error("Schema name and at least one field are required.");
       return;
     }
     try {
       setSaving(true);
-      setError(null);
       await api.schemas.create(schemaName.trim(), definition);
+      toast.success("Schema created");
       setSchemaName("");
       setFields([{ name: "", type: "str" }]);
-      setShowForm(false);
+      setCreateOpen(false);
       await loadSchemas();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create schema");
+      toast.error(
+        err instanceof Error ? err.message : "Failed to create schema"
+      );
     } finally {
       setSaving(false);
     }
   }
 
-  async function handleDelete(id: number) {
+  async function handleDelete() {
+    if (!deleteTarget) return;
     try {
-      setDeletingId(id);
-      await api.schemas.delete(id);
+      setDeleting(true);
+      await api.schemas.delete(deleteTarget.id);
+      toast.success("Schema deleted");
+      setDeleteTarget(null);
       await loadSchemas();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete schema");
+      toast.error(
+        err instanceof Error ? err.message : "Failed to delete schema"
+      );
     } finally {
-      setDeletingId(null);
+      setDeleting(false);
     }
   }
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-semibold">Schemas</h1>
-        <Button onClick={() => setShowForm((v) => !v)}>
-          {showForm ? "Cancel" : "New Schema"}
-        </Button>
-      </div>
-
-      {showForm && (
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>Create Schema</CardTitle>
-          </CardHeader>
-          <CardContent>
+      <PageHeader title="Schemas">
+        <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+          <DialogTrigger asChild>
+            <Button>New Schema</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Create Schema</DialogTitle>
+            </DialogHeader>
             <form onSubmit={handleCreate} className="flex flex-col gap-4">
-              <input
-                className="border rounded px-3 py-2 text-sm w-full"
-                placeholder="Schema name (e.g. Invoice)"
-                value={schemaName}
-                onChange={(e) => setSchemaName(e.target.value)}
-              />
               <div className="flex flex-col gap-2">
+                <Label htmlFor="schema-name">Name</Label>
+                <Input
+                  id="schema-name"
+                  placeholder="e.g. Invoice"
+                  value={schemaName}
+                  onChange={(e) => setSchemaName(e.target.value)}
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <Label>Fields</Label>
                 {fields.map((f, i) => (
                   <div key={i} className="flex gap-2 items-center">
-                    <input
-                      className="border rounded px-3 py-2 text-sm flex-1"
+                    <Input
                       placeholder="field_name"
                       value={f.name}
                       onChange={(e) => updateField(i, "name", e.target.value)}
+                      className="flex-1"
                     />
-                    <select
-                      className="border rounded px-3 py-2 text-sm"
+                    <Select
                       value={f.type}
-                      onChange={(e) => updateField(i, "type", e.target.value)}
+                      onValueChange={(v) => updateField(i, "type", v)}
                     >
-                      {FIELD_TYPES.map((t) => (
-                        <option key={t} value={t}>
-                          {t}
-                        </option>
-                      ))}
-                    </select>
+                      <SelectTrigger className="w-[140px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {FIELD_TYPES.map((t) => (
+                          <SelectItem key={t} value={t}>
+                            {t}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     {fields.length > 1 && (
-                      <button
+                      <Button
                         type="button"
+                        variant="ghost"
+                        size="icon-sm"
                         onClick={() => removeField(i)}
-                        className="text-zinc-400 hover:text-red-500 px-2 text-sm"
+                        className="text-muted-foreground hover:text-destructive"
                       >
                         ✕
-                      </button>
+                      </Button>
                     )}
                   </div>
                 ))}
-              </div>
-              <div className="flex gap-2">
-                <Button type="button" variant="outline" onClick={addField}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={addField}
+                >
                   + Add Field
                 </Button>
-                <Button type="submit" disabled={saving}>
-                  {saving ? "Saving…" : "Create"}
-                </Button>
               </div>
+              <DialogFooter>
+                <Button type="submit" disabled={saving}>
+                  {saving ? "Creating..." : "Create Schema"}
+                </Button>
+              </DialogFooter>
             </form>
-          </CardContent>
-        </Card>
-      )}
+          </DialogContent>
+        </Dialog>
+      </PageHeader>
 
-      {error && <p className="text-sm text-red-500 mb-4">{error}</p>}
+      {/* Delete confirmation dialog */}
+      <Dialog
+        open={deleteTarget !== null}
+        onOpenChange={(open) => {
+          if (!open) setDeleteTarget(null);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete schema</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            Delete <strong>{deleteTarget?.name}</strong>? This can't be undone.
+          </p>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteTarget(null)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={deleting}
+            >
+              {deleting ? "Deleting..." : "Delete"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {loading ? (
-        <p className="text-zinc-400 text-sm">Loading…</p>
+        <div className="flex flex-col gap-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} className="h-[72px] w-full rounded-xl" />
+          ))}
+        </div>
       ) : schemas.length === 0 ? (
-        <p className="text-zinc-500 text-sm">
-          No schemas yet. Create one to get started.
-        </p>
+        <EmptyState
+          icon={Braces}
+          title="No schemas yet"
+          description="Create a schema to define what data to extract from your documents."
+          actionLabel="New Schema"
+          onAction={() => setCreateOpen(true)}
+        />
       ) : (
         <div className="flex flex-col gap-3">
           {schemas.map((schema) => {
@@ -187,22 +263,23 @@ export default function SchemasPage() {
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle>{schema.name}</CardTitle>
-                    <button
-                      onClick={() => handleDelete(schema.id)}
-                      disabled={deletingId === schema.id}
-                      className="text-xs text-zinc-400 hover:text-red-500 transition-colors disabled:opacity-50"
+                    <Button
+                      variant="ghost"
+                      size="xs"
+                      onClick={() => setDeleteTarget(schema)}
+                      className="text-muted-foreground hover:text-destructive"
                     >
-                      {deletingId === schema.id ? "Deleting…" : "Delete"}
-                    </button>
+                      Delete
+                    </Button>
                   </div>
                   <div className="flex items-center gap-2 mt-1 flex-wrap">
                     <Badge variant="secondary">
                       {fieldCount} field{fieldCount !== 1 ? "s" : ""}
                     </Badge>
                     {Object.entries(definition).map(([k, v]) => (
-                      <span key={k} className="text-xs text-zinc-400">
+                      <Badge key={k} variant="outline" className="text-xs">
                         {k}: {v}
-                      </span>
+                      </Badge>
                     ))}
                   </div>
                 </CardHeader>
