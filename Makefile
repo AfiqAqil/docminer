@@ -1,7 +1,8 @@
 .PHONY: dev dev-api dev-web test lint format codegen setup
 
 dev:
-	$(MAKE) dev-api & $(MAKE) dev-web
+	start "dev-api" cmd /c "$(MAKE)" dev-api
+	"$(MAKE)" dev-web
 
 dev-api:
 	uv run uvicorn docminer_api.app:app --reload --port 8000
