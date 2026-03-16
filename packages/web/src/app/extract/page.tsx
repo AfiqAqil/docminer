@@ -99,16 +99,19 @@ export default function ExtractPage() {
     <div>
       <PageHeader title="Extract" />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 stagger-children">
         {/* Left panel — inputs */}
-        <Card>
+        <Card className="ring-1 ring-white/[0.06]">
           <CardHeader>
-            <CardTitle>Configuration</CardTitle>
+            <CardTitle className="font-display">Configuration</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
               <Label>Document</Label>
-              <Select value={selectedDocId} onValueChange={setSelectedDocId}>
+              <Select
+                value={selectedDocId}
+                onValueChange={(v) => setSelectedDocId(v ?? "")}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select a document..." />
                 </SelectTrigger>
@@ -126,7 +129,7 @@ export default function ExtractPage() {
               <Label>Schema</Label>
               <Select
                 value={selectedSchemaId}
-                onValueChange={setSelectedSchemaId}
+                onValueChange={(v) => setSelectedSchemaId(v ?? "")}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select a schema..." />
@@ -164,11 +167,13 @@ export default function ExtractPage() {
               description="Select a document and schema, then click Extract to pull structured data."
             />
           ) : (
-            <Card>
+            <Card className="ring-1 ring-white/[0.06]">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <CardTitle>Job #{job.id}</CardTitle>
+                    <CardTitle className="font-display">
+                      Job #{job.id}
+                    </CardTitle>
                     <StatusBadge status={job.status} />
                   </div>
                   {job.status === "completed" && job.result && (
@@ -184,7 +189,7 @@ export default function ExtractPage() {
               </CardHeader>
               <CardContent>
                 {job.status === "completed" && job.result && (
-                  <pre className="bg-muted rounded-lg p-4 text-xs font-mono overflow-auto max-h-96">
+                  <pre className="bg-black/30 ring-1 ring-white/[0.06] rounded-lg p-4 text-xs font-mono overflow-auto max-h-96">
                     {JSON.stringify(JSON.parse(job.result), null, 2)}
                   </pre>
                 )}

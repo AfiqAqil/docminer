@@ -81,14 +81,18 @@ export default function DocumentsPage() {
           onAction={() => inputRef.current?.click()}
         />
       ) : (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 stagger-children">
           {documents.map((doc) => (
-            <Card key={doc.id} size="sm">
+            <Card
+              key={doc.id}
+              size="sm"
+              className="card-hover ring-1 ring-white/[0.06]"
+            >
               <CardHeader>
                 <CardTitle>{doc.filename}</CardTitle>
                 <div className="flex items-center gap-2 mt-1">
                   <Badge variant="secondary">{doc.content_type}</Badge>
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-xs text-muted-foreground font-mono">
                     {new Date(doc.uploaded_at).toLocaleString()}
                   </span>
                 </div>

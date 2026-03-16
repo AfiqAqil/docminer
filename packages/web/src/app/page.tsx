@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/page-header";
 import { StatusBadge } from "@/components/status-badge";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -114,30 +114,34 @@ function OnboardingView({
   const completed = [hasDocuments, hasSchemas, false];
 
   return (
-    <div>
-      <div className="text-center mb-12 mt-8">
-        <h1 className="text-3xl font-bold tracking-tight mb-2">
+    <div className="animate-fade-up">
+      <div className="text-center mb-14 mt-10">
+        <h1 className="font-display text-3xl font-bold tracking-tight mb-3">
           Welcome to <span className="text-primary">docminer</span>
         </h1>
-        <p className="text-muted-foreground max-w-md mx-auto">
+        <p className="text-muted-foreground max-w-md mx-auto text-[15px]">
           Extract structured data from documents using AI and custom schemas.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto stagger-children">
         {steps.map((step, i) => {
           const done = completed[i];
           return (
             <Card
               key={step.title}
-              className={`relative ${done ? "ring-1 ring-emerald-500/30" : ""}`}
+              className={`card-hover relative ${done ? "ring-1 ring-emerald-500/20" : "ring-1 ring-white/[0.06]"}`}
             >
               <CardHeader className="items-center text-center">
-                <div className="text-xs text-muted-foreground mb-2">
+                <div className="text-xs text-muted-foreground mb-2 font-display">
                   Step {i + 1}
                 </div>
                 <div
-                  className={`rounded-xl p-3 mb-2 ${done ? "bg-emerald-500/10" : "bg-primary/10"}`}
+                  className={`rounded-xl p-3.5 mb-2 ${
+                    done
+                      ? "bg-emerald-500/10 shadow-[0_0_16px_oklch(0.627_0.194_149.214/12%)]"
+                      : "bg-primary/10 shadow-[0_0_16px_oklch(0.55_0.25_285/10%)]"
+                  }`}
                 >
                   {done ? (
                     <CheckCircle2 className="size-6 text-emerald-400" />
@@ -145,19 +149,23 @@ function OnboardingView({
                     <step.icon className="size-6 text-primary" />
                   )}
                 </div>
-                <CardTitle className="text-base">{step.title}</CardTitle>
+                <CardTitle className="text-base font-display">
+                  {step.title}
+                </CardTitle>
               </CardHeader>
               <CardContent className="text-center">
                 <p className="text-sm text-muted-foreground mb-4">
                   {step.description}
                 </p>
-                <Button
-                  asChild
-                  variant={done ? "outline" : "default"}
-                  size="sm"
+                <Link
+                  href={step.href}
+                  className={buttonVariants({
+                    variant: done ? "outline" : "default",
+                    size: "sm",
+                  })}
                 >
-                  <Link href={step.href}>{done ? "Done" : step.label}</Link>
-                </Button>
+                  {done ? "Done" : step.label}
+                </Link>
               </CardContent>
             </Card>
           );
@@ -196,13 +204,13 @@ function StatsView({
   return (
     <div>
       <PageHeader title="Dashboard">
-        <Button asChild>
-          <Link href="/extract">New Extraction</Link>
-        </Button>
+        <Link href="/extract" className={buttonVariants()}>
+          New Extraction
+        </Link>
       </PageHeader>
 
       {/* Stat cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10 stagger-children">
         <StatCard label="Documents" value={documents.length} />
         <StatCard label="Schemas" value={schemas.length} />
         <StatCard label="Extractions" value={extractions.length} />
@@ -211,11 +219,17 @@ function StatsView({
 
       {/* Recent extractions */}
       {recent.length > 0 && (
-        <div>
-          <h2 className="text-lg font-medium mb-4">Recent Extractions</h2>
-          <div className="flex flex-col gap-2">
+        <div className="animate-fade-up" style={{ animationDelay: "200ms" }}>
+          <h2 className="font-display text-lg font-medium mb-4">
+            Recent Extractions
+          </h2>
+          <div className="flex flex-col gap-2 stagger-children">
             {recent.map((job) => (
-              <Card key={job.id} size="sm">
+              <Card
+                key={job.id}
+                size="sm"
+                className="card-hover ring-1 ring-white/[0.06]"
+              >
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
@@ -238,7 +252,7 @@ function StatsView({
                             | "failed"
                         }
                       />
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-xs text-muted-foreground font-mono">
                         {formatRelativeTime(job.created_at)}
                       </span>
                     </div>
@@ -255,10 +269,12 @@ function StatsView({
 
 function StatCard({ label, value }: { label: string; value: number | string }) {
   return (
-    <Card>
+    <Card className="card-hover ring-1 ring-white/[0.06]">
       <CardContent className="pt-4">
-        <p className="text-2xl font-bold">{value}</p>
-        <p className="text-xs text-muted-foreground">{label}</p>
+        <p className="font-display text-2xl font-bold tracking-tight">
+          {value}
+        </p>
+        <p className="text-xs text-muted-foreground mt-0.5">{label}</p>
       </CardContent>
     </Card>
   );

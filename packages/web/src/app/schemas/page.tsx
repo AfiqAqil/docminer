@@ -133,9 +133,7 @@ export default function SchemasPage() {
     <div>
       <PageHeader title="Schemas">
         <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-          <DialogTrigger asChild>
-            <Button>New Schema</Button>
-          </DialogTrigger>
+          <DialogTrigger render={<Button />}>New Schema</DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Create Schema</DialogTitle>
@@ -162,7 +160,7 @@ export default function SchemasPage() {
                     />
                     <Select
                       value={f.type}
-                      onValueChange={(v) => updateField(i, "type", v)}
+                      onValueChange={(v) => updateField(i, "type", v ?? "str")}
                     >
                       <SelectTrigger className="w-[140px]">
                         <SelectValue />
@@ -251,7 +249,7 @@ export default function SchemasPage() {
           onAction={() => setCreateOpen(true)}
         />
       ) : (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 stagger-children">
           {schemas.map((schema) => {
             const definition = JSON.parse(schema.definition) as Record<
               string,
@@ -259,7 +257,11 @@ export default function SchemasPage() {
             >;
             const fieldCount = Object.keys(definition).length;
             return (
-              <Card key={schema.id} size="sm">
+              <Card
+                key={schema.id}
+                size="sm"
+                className="card-hover ring-1 ring-white/[0.06]"
+              >
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle>{schema.name}</CardTitle>
@@ -277,7 +279,11 @@ export default function SchemasPage() {
                       {fieldCount} field{fieldCount !== 1 ? "s" : ""}
                     </Badge>
                     {Object.entries(definition).map(([k, v]) => (
-                      <Badge key={k} variant="outline" className="text-xs">
+                      <Badge
+                        key={k}
+                        variant="outline"
+                        className="text-xs font-mono"
+                      >
                         {k}: {v}
                       </Badge>
                     ))}
