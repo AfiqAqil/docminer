@@ -114,5 +114,5 @@ Use the correct tier and invoke the matching skills:
 ## Key Files
 
 - `docs/plans/2026-03-13-docminer-design.md` — approved design document
-- `docs/ROADMAP.md` — project roadmap and milestones
+- `TODO.md` — feature tracker and project status
 - `project.md` — original project spec and motivation

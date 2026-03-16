@@ -108,7 +108,7 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
 
 ## Roadmap
 
-See [docs/ROADMAP.md](docs/ROADMAP.md).
+See [TODO.md](TODO.md).
 
 ## License
 
