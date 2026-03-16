@@ -54,6 +54,15 @@ make dev    # start API + frontend dev servers
 
 Open `http://localhost:3000` — upload a document, define a schema, extract structured data.
 
+### Web App Stack
+
+- **Next.js 15** (App Router) with **Tailwind CSS v4** and **shadcn/ui** (base-nova style)
+- Dark-only theme with violet accent palette
+- Lucide icons, Geist typography, Sonner toasts
+- Typed API client consuming the FastAPI backend
+
+<!-- TODO: Add screenshots of dashboard and extract page -->
+
 ## How It Works
 
 ```
@@ -76,7 +85,7 @@ docminer/
 
 - **core** — standalone library, zero web dependencies
 - **api** — wraps core with persistence, file management, job tracking
-- **web** — UI for uploading documents, managing schemas, viewing results
+- **web** — dark-themed UI for uploading documents, managing schemas, viewing extraction results
 
 ## Development Setup
 

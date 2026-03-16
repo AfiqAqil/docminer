@@ -111,8 +111,19 @@ Use the correct tier and invoke the matching skills:
 - **OpenAPI codegen:** API server must be running for `make codegen` to fetch the spec
 - **pnpm** is not installed globally by default — run `npm install -g pnpm` on fresh setup
 
+## Frontend Conventions
+
+- **Theme:** Dark only. `.dark` class on `<html>`. No light mode toggle.
+- **Palette:** Violet accent (`--primary`). Emerald for success. Red for destructive. Neutral for muted/secondary.
+- **Components:** Use shadcn/ui components (base-nova style). Never use raw `<input>`, `<select>` — use shadcn `Input`, `Select`.
+- **Custom components:** `PageHeader` (title + action), `EmptyState` (icon + title + CTA), `StatusBadge` (extraction status).
+- **Icons:** Lucide React. 18px default. Muted foreground default, violet when active.
+- **Loading:** Skeleton components, not "Loading..." text.
+- **Errors/Success:** Sonner toasts, not inline `<p>` tags.
+- **Layout:** Compact sidebar (icons + labels) + main content area with `max-w-6xl`.
+
 ## Key Files
 
 - `docs/plans/2026-03-13-docminer-design.md` — approved design document
+- `docs/plans/2026-03-16-ui-foundation-design.md` — approved UI foundation design
 - `TODO.md` — feature tracker and project status
-- `project.md` — original project spec and motivation
