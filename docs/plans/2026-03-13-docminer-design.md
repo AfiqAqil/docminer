@@ -36,47 +36,45 @@ Based on "Page" — a production system built at MindHive deployed across educat
 
 ## Project Structure
 
-> **Refactored (2026-03-17):** Simplified from three-package monorepo (`packages/{core,api,web}`) to two top-level directories. Core library merged into backend as `docminer_api.extraction` module.
+> **Refactored (2026-03-19):** Simplified from three-package monorepo to flat `backend/` + `frontend/` layout. Core library merged into backend as `app.extraction` module. Removed `src/` nesting.
 
 ```
 docminer/
 ├── backend/
 │   ├── pyproject.toml
-│   └── src/
-│       └── docminer_api/
-│           ├── app.py                   # FastAPI app factory
-│           ├── config.py                # Pydantic Settings
-│           ├── database.py              # SQLite connection/session
-│           ├── models/                  # SQLModel tables
-│           │   ├── document.py
-│           │   ├── schema.py
-│           │   └── extraction.py
-│           ├── routes/                  # API endpoints
-│           │   ├── documents.py
-│           │   ├── schemas.py
-│           │   └── extract.py
-│           ├── services/                # Business logic
-│           │   └── extraction_service.py
-│           └── extraction/              # Core extraction engine
-│               ├── extractor.py         # Extractor class (main entry point)
-│               ├── llm.py               # litellm wrapper, prompt construction
-│               ├── schema.py            # Pydantic model utilities, from_dict()
-│               ├── result.py            # ExtractionResult dataclass
-│               └── exceptions.py        # Custom exceptions
+│   ├── app/                         # Python package
+│   │   ├── main.py                  # FastAPI app factory
+│   │   ├── config.py                # Pydantic Settings
+│   │   ├── database.py              # SQLite connection/session
+│   │   ├── models/                  # SQLModel tables
+│   │   │   ├── document.py
+│   │   │   ├── schema.py
+│   │   │   └── extraction.py
+│   │   ├── routes/                  # API endpoints
+│   │   │   ├── documents.py
+│   │   │   ├── schemas.py
+│   │   │   └── extract.py
+│   │   ├── services/                # Business logic
+│   │   │   └── extraction_service.py
+│   │   └── extraction/              # Core extraction engine
+│   │       ├── extractor.py
+│   │       ├── llm.py
+│   │       ├── schema.py
+│   │       ├── result.py
+│   │       └── exceptions.py
+│   └── tests/
+│       ├── test_api/
+│       └── test_extraction/
 │
-├── frontend/                    # Next.js frontend
+├── frontend/                        # Next.js
 │   ├── package.json
-│   ├── next.config.ts
 │   └── src/
-│       ├── app/                         # App Router
+│       ├── app/
 │       ├── components/
-│       └── lib/
-│           └── api/                     # Typed API client
+│       └── lib/api/
 │
-├── pyproject.toml               # uv workspace root
+├── pyproject.toml                   # uv workspace root
 ├── uv.lock
-├── .gitignore
-├── LICENSE
 └── README.md
 ```
 
@@ -86,7 +84,7 @@ docminer/
 
 ## Extraction Engine
 
-The extraction engine lives in `backend/src/docminer_api/extraction/` and provides the core document-to-JSON pipeline.
+The extraction engine lives in `backend/app/extraction/` and provides the core document-to-JSON pipeline.
 
 ### Key decisions
 

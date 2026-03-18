@@ -4,8 +4,8 @@ import io
 import json
 from unittest.mock import patch
 
-import docminer_api.config as cfg
-from docminer_api.extraction import ExtractionResult
+import app.config as cfg
+from app.extraction import ExtractionResult
 from fastapi.testclient import TestClient
 from pydantic import BaseModel
 
@@ -78,7 +78,7 @@ def test_extraction_completes_successfully(client: TestClient, tmp_path, monkeyp
         raw='{"invoice_no": "INV-001", "total": 99.99}',
     )
 
-    with patch("docminer_api.services.extraction_service.Extractor") as mock_cls:
+    with patch("app.services.extraction_service.Extractor") as mock_cls:
         mock_cls.return_value.extract.return_value = fake_result
         create = client.post(
             "/extract", json={"document_id": doc_id, "schema_id": schema_id}
@@ -120,7 +120,7 @@ def test_extraction_fails_on_extractor_error(client: TestClient, tmp_path, monke
     doc_id = _upload_doc(client, tmp_path, monkeypatch)
     schema_id = _create_schema(client)
 
-    with patch("docminer_api.services.extraction_service.Extractor") as mock_cls:
+    with patch("app.services.extraction_service.Extractor") as mock_cls:
         mock_cls.return_value.extract.side_effect = Exception("LLM unavailable")
         create = client.post(
             "/extract", json={"document_id": doc_id, "schema_id": schema_id}
@@ -150,7 +150,7 @@ def test_stream_completed_job(client: TestClient, tmp_path, monkeypatch):
         raw='{"invoice_no": "INV-002", "total": 0.0}',
     )
 
-    with patch("docminer_api.services.extraction_service.Extractor") as mock_cls:
+    with patch("app.services.extraction_service.Extractor") as mock_cls:
         mock_cls.return_value.extract.return_value = fake_result
         create = client.post(
             "/extract", json={"document_id": doc_id, "schema_id": schema_id}

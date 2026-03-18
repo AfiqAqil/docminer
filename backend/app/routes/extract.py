@@ -8,9 +8,9 @@ from pydantic import BaseModel
 from sqlmodel import Session, select
 from sse_starlette.sse import EventSourceResponse
 
-from docminer_api.database import get_session
-from docminer_api.models import ExtractionJob
-from docminer_api.services import run_extraction
+from app.database import get_session
+from app.models import ExtractionJob
+from app.services import run_extraction
 
 router = APIRouter(prefix="/extract", tags=["extract"])
 
@@ -64,7 +64,7 @@ async def stream_job(job_id: int) -> EventSourceResponse:
     async def event_generator() -> AsyncGenerator[dict, None]:
         import asyncio
 
-        import docminer_api.database as _db
+        import app.database as _db
 
         while True:
             with Session(_db.engine) as s:

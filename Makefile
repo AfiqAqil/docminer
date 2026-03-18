@@ -5,7 +5,7 @@ dev:
 	"$(MAKE)" dev-web
 
 dev-api:
-	uv run uvicorn docminer_api.app:app --reload --port 8000
+	uv run uvicorn app.main:app --reload --port 8000
 
 dev-web:
 	cd frontend && pnpm dev

@@ -1,4 +1,4 @@
-from docminer_api.extraction.result import ExtractionResult
+from app.extraction.result import ExtractionResult
 from pydantic import BaseModel
 
 

@@ -6,9 +6,9 @@ from pathlib import Path
 from fastapi import APIRouter, Depends, UploadFile, status
 from sqlmodel import Session, select
 
-from docminer_api.config import settings
-from docminer_api.database import get_session
-from docminer_api.models import Document
+from app.config import settings
+from app.database import get_session
+from app.models import Document
 
 router = APIRouter(prefix="/documents", tags=["documents"])
 

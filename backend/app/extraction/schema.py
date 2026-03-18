@@ -3,7 +3,7 @@ from typing import Any
 
 from pydantic import BaseModel, create_model
 
-from docminer_api.extraction.exceptions import SchemaError
+from app.extraction.exceptions import SchemaError
 
 _TYPE_MAP: dict[str, type] = {
     "str": str,

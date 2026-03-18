@@ -5,14 +5,14 @@ from datetime import UTC, datetime
 
 from sqlmodel import Session
 
-from docminer_api.extraction import Extractor
-from docminer_api.extraction.schema import from_dict
-from docminer_api.models import Document, ExtractionJob, Schema
+from app.extraction import Extractor
+from app.extraction.schema import from_dict
+from app.models import Document, ExtractionJob, Schema
 
 
 def run_extraction(job_id: int) -> None:
     """Run extraction for a job. Creates its own DB session."""
-    import docminer_api.database as _db
+    import app.database as _db
 
     with Session(_db.engine) as session:
         job = session.get(ExtractionJob, job_id)
@@ -33,7 +33,7 @@ def run_extraction(job_id: int) -> None:
             schema_dict = json.loads(schema_record.definition)
             schema_model = from_dict(schema_dict)
 
-            import docminer_api.config as _cfg
+            import app.config as _cfg
 
             extractor = Extractor(model=_cfg.settings.model)
             result = extractor.extract(document.file_path, schema=schema_model)

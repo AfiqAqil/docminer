@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import io
 
-import docminer_api.config as cfg
+import app.config as cfg
 from fastapi.testclient import TestClient
 
 

@@ -5,7 +5,7 @@
 **docminer** — Schema-driven document extraction web app powered by Docling and LLMs.
 
 Two top-level directories:
-- `backend/` — FastAPI + extraction engine. Single Python package (`docminer_api`).
+- `backend/` — FastAPI + extraction engine. Python package: `app`.
 - `frontend/` — Next.js UI. Consumes API via typed OpenAPI client.
 
 ## Tech Stack
@@ -114,19 +114,24 @@ Use the correct tier and invoke the matching skills:
 ## Backend Structure
 
 ```
-backend/src/docminer_api/
-├── app.py              # FastAPI factory
-├── config.py           # Settings
-├── database.py         # SQLite session
-├── models/             # SQLModel tables (document, schema, extraction)
-├── routes/             # API endpoints (documents, schemas, extract)
-├── services/           # Business logic (extraction_service)
-└── extraction/         # Core extraction engine
-    ├── extractor.py    # Docling + LLM orchestration
-    ├── llm.py          # litellm wrapper
-    ├── schema.py       # Pydantic utilities
-    ├── result.py       # ExtractionResult
-    └── exceptions.py   # Custom exceptions
+backend/
+├── pyproject.toml
+├── app/                    # Python package
+│   ├── main.py             # FastAPI factory
+│   ├── config.py           # Settings
+│   ├── database.py         # SQLite session
+│   ├── models/             # SQLModel tables (document, schema, extraction)
+│   ├── routes/             # API endpoints (documents, schemas, extract)
+│   ├── services/           # Business logic (extraction_service)
+│   └── extraction/         # Core extraction engine
+│       ├── extractor.py    # Docling + LLM orchestration
+│       ├── llm.py          # litellm wrapper
+│       ├── schema.py       # Pydantic utilities
+│       ├── result.py       # ExtractionResult
+│       └── exceptions.py   # Custom exceptions
+└── tests/
+    ├── test_api/           # Integration tests (FastAPI TestClient)
+    └── test_extraction/    # Unit tests (extraction engine)
 ```
 
 ## Frontend Conventions

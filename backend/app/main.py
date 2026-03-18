@@ -7,9 +7,9 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from docminer_api.config import settings
-from docminer_api.database import create_db_and_tables
-from docminer_api.routes import documents, extract, schemas
+from app.config import settings
+from app.database import create_db_and_tables
+from app.routes import documents, extract, schemas
 
 
 @asynccontextmanager

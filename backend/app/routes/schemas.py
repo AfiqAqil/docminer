@@ -6,8 +6,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 from sqlmodel import Session, select
 
-from docminer_api.database import get_session
-from docminer_api.models import Schema
+from app.database import get_session
+from app.models import Schema
 
 router = APIRouter(prefix="/schemas", tags=["schemas"])
 

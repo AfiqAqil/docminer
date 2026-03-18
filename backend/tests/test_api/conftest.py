@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-import docminer_api.database as db_module
+import app.database as db_module
 import pytest
-from docminer_api.app import app
-from docminer_api.database import get_session
+from app.database import get_session
+from app.main import app
 from fastapi.testclient import TestClient
 from sqlmodel import Session, SQLModel, create_engine
 from sqlmodel.pool import StaticPool

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from sqlmodel import Session, SQLModel, create_engine
 
-from docminer_api.config import settings
+from app.config import settings
 
 engine = create_engine(
     settings.db_url,

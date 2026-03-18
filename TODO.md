@@ -23,8 +23,8 @@ High-level feature tracker for docminer.
 
 ## Phase 2 — Web App — IN PROGRESS
 
-> **Refactor (2026-03-17):** Restructured from `packages/{core,api,web}` to `backend/` + `frontend/`.
-> Core library merged into backend as `docminer_api.extraction` module.
+> **Refactor (2026-03-19):** Restructured from `packages/{core,api,web}` to `backend/` + `frontend/`.
+> Core library merged into backend as `app.extraction` module.
 
 ### API (FastAPI) — DONE
 
