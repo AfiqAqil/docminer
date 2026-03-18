@@ -2,52 +2,148 @@
 
 import { Float, Sparkles } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { useEffect, useRef, useState } from "react";
-import type * as THREE from "three";
+import { useEffect, useMemo, useRef, useState } from "react";
+import * as THREE from "three";
 
-function Gem() {
-  const meshRef = useRef<THREE.Mesh>(null);
+function Crystal() {
+  const groupRef = useRef<THREE.Group>(null);
+  const wireRef = useRef<THREE.Mesh>(null);
 
   useFrame(({ clock }) => {
-    if (!meshRef.current) return;
-    meshRef.current.rotation.y = clock.elapsedTime * 0.3;
-    meshRef.current.rotation.x = Math.sin(clock.elapsedTime * 0.2) * 0.15;
+    if (!groupRef.current) return;
+    const t = clock.elapsedTime;
+    groupRef.current.rotation.y = t * 0.15;
+    groupRef.current.rotation.x = Math.sin(t * 0.12) * 0.1;
+
+    if (wireRef.current) {
+      (wireRef.current.material as THREE.MeshBasicMaterial).opacity =
+        0.08 + Math.sin(t * 1.5) * 0.04;
+    }
   });
 
   return (
-    <Float speed={1.5} rotationIntensity={0.3} floatIntensity={0.8}>
-      <mesh ref={meshRef}>
-        <icosahedronGeometry args={[1.4, 1]} />
-        <meshPhysicalMaterial
-          color="#7c3aed"
-          emissive="#7c3aed"
-          emissiveIntensity={0.4}
-          roughness={0.15}
-          metalness={0.8}
-          clearcoat={1}
-          clearcoatRoughness={0.1}
-          envMapIntensity={1.5}
-          transparent
-          opacity={0.92}
-        />
-      </mesh>
+    <Float speed={1.2} rotationIntensity={0.15} floatIntensity={0.6}>
+      <group ref={groupRef}>
+        {/* Solid crystal */}
+        <mesh>
+          <dodecahedronGeometry args={[1.35, 0]} />
+          <meshPhysicalMaterial
+            color="#8b5cf6"
+            emissive="#6d28d9"
+            emissiveIntensity={0.3}
+            roughness={0.08}
+            metalness={0.95}
+            clearcoat={1}
+            clearcoatRoughness={0.05}
+            envMapIntensity={2}
+            transparent
+            opacity={0.88}
+            side={THREE.DoubleSide}
+          />
+        </mesh>
+
+        {/* Wireframe overlay — analysis grid */}
+        <mesh ref={wireRef} scale={1.005}>
+          <dodecahedronGeometry args={[1.35, 0]} />
+          <meshBasicMaterial
+            color="#c4b5fd"
+            wireframe
+            transparent
+            opacity={0.1}
+          />
+        </mesh>
+
+        {/* Inner glow core */}
+        <mesh scale={0.6}>
+          <dodecahedronGeometry args={[1.35, 0]} />
+          <meshBasicMaterial color="#a78bfa" transparent opacity={0.15} />
+        </mesh>
+      </group>
     </Float>
   );
 }
 
-function ScanBeam() {
+function OrbitalRing() {
+  const ringRef = useRef<THREE.Mesh>(null);
+
+  const ringGeo = useMemo(() => {
+    const geo = new THREE.TorusGeometry(2.2, 0.008, 8, 128);
+    return geo;
+  }, []);
+
+  useFrame(({ clock }) => {
+    if (!ringRef.current) return;
+    const t = clock.elapsedTime;
+    ringRef.current.rotation.x = Math.PI * 0.42 + Math.sin(t * 0.2) * 0.03;
+    ringRef.current.rotation.z = t * 0.08;
+  });
+
+  return (
+    <mesh ref={ringRef} geometry={ringGeo}>
+      <meshBasicMaterial color="#a78bfa" transparent opacity={0.25} />
+    </mesh>
+  );
+}
+
+function ScanPlane() {
   const meshRef = useRef<THREE.Mesh>(null);
 
   useFrame(({ clock }) => {
     if (!meshRef.current) return;
-    meshRef.current.position.y = Math.sin(clock.elapsedTime * 0.8) * 2;
+    const t = clock.elapsedTime;
+    meshRef.current.position.y = Math.sin(t * 0.6) * 1.8;
+    (meshRef.current.material as THREE.MeshBasicMaterial).opacity =
+      0.3 + Math.sin(t * 2) * 0.15;
   });
 
   return (
-    <mesh ref={meshRef} rotation={[0, 0, 0]}>
-      <planeGeometry args={[6, 0.02]} />
-      <meshBasicMaterial color="#7c3aed" transparent opacity={0.6} />
+    <mesh ref={meshRef}>
+      <planeGeometry args={[5, 0.015]} />
+      <meshBasicMaterial color="#c4b5fd" transparent opacity={0.35} />
     </mesh>
+  );
+}
+
+function DataMotes() {
+  const count = 8;
+  const meshRef = useRef<THREE.InstancedMesh>(null);
+  const dummy = useMemo(() => new THREE.Object3D(), []);
+
+  const offsets = useMemo(
+    () =>
+      Array.from({ length: count }, () => ({
+        angle: Math.random() * Math.PI * 2,
+        radius: 1.8 + Math.random() * 0.8,
+        speed: 0.15 + Math.random() * 0.2,
+        y: (Math.random() - 0.5) * 2,
+        ySpeed: 0.3 + Math.random() * 0.3,
+      })),
+    [],
+  );
+
+  useFrame(({ clock }) => {
+    if (!meshRef.current) return;
+    const t = clock.elapsedTime;
+    for (let i = 0; i < count; i++) {
+      const o = offsets[i];
+      const a = o.angle + t * o.speed;
+      dummy.position.set(
+        Math.cos(a) * o.radius,
+        o.y + Math.sin(t * o.ySpeed) * 0.5,
+        Math.sin(a) * o.radius,
+      );
+      dummy.scale.setScalar(0.015 + Math.sin(t * 2 + i) * 0.008);
+      dummy.updateMatrix();
+      meshRef.current.setMatrixAt(i, dummy.matrix);
+    }
+    meshRef.current.instanceMatrix.needsUpdate = true;
+  });
+
+  return (
+    <instancedMesh ref={meshRef} args={[undefined, undefined, count]}>
+      <sphereGeometry args={[1, 6, 6]} />
+      <meshBasicMaterial color="#e9d5ff" transparent opacity={0.7} />
+    </instancedMesh>
   );
 }
 
@@ -61,32 +157,52 @@ export function HeroScene() {
     );
     const onVisibility = () => setVisible(!document.hidden);
     document.addEventListener("visibilitychange", onVisibility);
-    return () => document.removeEventListener("visibilitychange", onVisibility);
+    return () =>
+      document.removeEventListener("visibilitychange", onVisibility);
   }, []);
 
   return (
     <Canvas
       frameloop={visible && !reducedMotion ? "always" : "demand"}
-      camera={{ position: [0, 0, 5], fov: 45 }}
+      camera={{ position: [0, 0, 5.5], fov: 40 }}
       dpr={[1, 1.5]}
       gl={{ antialias: true, alpha: true }}
       style={{ background: "transparent" }}
     >
-      <ambientLight intensity={0.3} />
-      <directionalLight position={[5, 5, 5]} intensity={0.8} color="#e0d4ff" />
-      <pointLight position={[-3, -2, 2]} intensity={0.5} color="#7c3aed" />
-      <pointLight position={[3, 2, -2]} intensity={0.3} color="#a78bfa" />
+      {/* Ambient fill */}
+      <ambientLight intensity={0.2} />
 
-      <Gem />
-      <ScanBeam />
+      {/* Key light — warm highlight from upper right */}
+      <directionalLight
+        position={[4, 4, 3]}
+        intensity={0.9}
+        color="#ede9fe"
+      />
+
+      {/* Rim light — cool violet from behind left */}
+      <directionalLight
+        position={[-3, 1, -4]}
+        intensity={0.4}
+        color="#7c3aed"
+      />
+
+      {/* Accent point lights */}
+      <pointLight position={[-2, -2, 3]} intensity={0.4} color="#8b5cf6" />
+      <pointLight position={[3, 2, -1]} intensity={0.25} color="#c4b5fd" />
+      <pointLight position={[0, -3, 1]} intensity={0.15} color="#6d28d9" />
+
+      <Crystal />
+      <OrbitalRing />
+      <ScanPlane />
+      <DataMotes />
 
       <Sparkles
-        count={60}
-        scale={5}
-        size={1.5}
-        speed={0.4}
-        opacity={0.5}
-        color="#a78bfa"
+        count={40}
+        scale={6}
+        size={1.2}
+        speed={0.3}
+        opacity={0.4}
+        color="#c4b5fd"
       />
     </Canvas>
   );

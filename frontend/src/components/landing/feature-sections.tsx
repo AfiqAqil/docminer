@@ -33,7 +33,7 @@ export function FeatureSections() {
   const inView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section ref={ref} className="py-24 px-4">
+    <section ref={ref} id="features" className="py-24 px-4">
       <motion.div
         className="max-w-4xl mx-auto"
         variants={staggerContainer}
