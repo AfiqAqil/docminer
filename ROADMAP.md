@@ -42,10 +42,10 @@ The Next.js frontend and FastAPI backend that make the extraction engine usable.
 
 | Priority | Task | Notes |
 |----------|------|-------|
-| 🔴 Now | Cyberpunk visual redesign | Neon glow system, perspective grid, scan-line effects, Framer Motion transitions |
-| 🔴 Now | Route restructure | Move app pages under `/app/*`, landing page at `/` |
-| 🔴 Now | App interior polish | Per-page cyberpunk treatment: dashboard, documents, schemas, extract |
-| 🔴 Now | Landing page with 3D hero | R3F crystalline gem scene, feature sections, scroll animations |
+| ✅ Done | Cyberpunk visual redesign | Neon glow system, perspective grid, scan-line effects, Framer Motion transitions |
+| ✅ Done | Route restructure | App pages under `/app/*`, landing page at `/` |
+| ✅ Done | App interior polish | Per-page cyberpunk treatment: dashboard, documents, schemas, extract |
+| ✅ Done | Landing page with 3D hero | R3F crystalline gem scene, feature sections, scroll animations |
 | 🔴 Now | Document preview | Display uploaded document (image/PDF) in extract results view |
 | 🔴 Now | Results side-by-side view | Document on left, extracted JSON on right |
 | 🟡 Next | OpenAPI codegen | Replace hand-written client with generated typed client |

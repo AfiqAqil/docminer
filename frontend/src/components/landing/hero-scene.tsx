@@ -53,8 +53,12 @@ function ScanBeam() {
 
 export function HeroScene() {
   const [visible, setVisible] = useState(true);
+  const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
+    setReducedMotion(
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    );
     const onVisibility = () => setVisible(!document.hidden);
     document.addEventListener("visibilitychange", onVisibility);
     return () => document.removeEventListener("visibilitychange", onVisibility);
@@ -62,7 +66,7 @@ export function HeroScene() {
 
   return (
     <Canvas
-      frameloop={visible ? "always" : "never"}
+      frameloop={visible && !reducedMotion ? "always" : "demand"}
       camera={{ position: [0, 0, 5], fov: 45 }}
       dpr={[1, 1.5]}
       gl={{ antialias: true, alpha: true }}
