@@ -1,8 +1,10 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { Braces } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { ScanLine } from "@/components/effects/scan-line";
 import { EmptyState } from "@/components/empty-state";
 import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
@@ -27,6 +29,7 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api, type Schema } from "@/lib/api/client";
+import { staggerContainer, staggerItem } from "@/lib/motion";
 
 const FIELD_TYPES = [
   "str",
@@ -249,7 +252,12 @@ export default function SchemasPage() {
           onAction={() => setCreateOpen(true)}
         />
       ) : (
-        <div className="flex flex-col gap-3 stagger-children">
+        <motion.div
+          className="flex flex-col gap-3"
+          variants={staggerContainer}
+          initial="hidden"
+          animate="visible"
+        >
           {schemas.map((schema) => {
             const definition = JSON.parse(schema.definition) as Record<
               string,
@@ -257,42 +265,54 @@ export default function SchemasPage() {
             >;
             const fieldCount = Object.keys(definition).length;
             return (
-              <Card
-                key={schema.id}
-                size="sm"
-                className="card-hover ring-1 ring-white/[0.06]"
-              >
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle>{schema.name}</CardTitle>
-                    <Button
-                      variant="ghost"
-                      size="xs"
-                      onClick={() => setDeleteTarget(schema)}
-                      className="text-muted-foreground hover:text-destructive"
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                  <div className="flex items-center gap-2 mt-1 flex-wrap">
-                    <Badge variant="secondary">
-                      {fieldCount} field{fieldCount !== 1 ? "s" : ""}
-                    </Badge>
-                    {Object.entries(definition).map(([k, v]) => (
-                      <Badge
-                        key={k}
-                        variant="outline"
-                        className="text-xs font-mono"
-                      >
-                        {k}: {v}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardHeader>
-              </Card>
+              <motion.div key={schema.id} variants={staggerItem}>
+                <ScanLine onHover>
+                  <Card
+                    size="sm"
+                    className="group card-hover ring-1 ring-white/[0.06]"
+                  >
+                    <CardHeader>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <CardTitle>{schema.name}</CardTitle>
+                          <Badge variant="secondary">
+                            {fieldCount} field{fieldCount !== 1 ? "s" : ""}
+                          </Badge>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="xs"
+                          onClick={() => setDeleteTarget(schema)}
+                          className="text-muted-foreground hover:text-destructive"
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                      {/* Terminal-styled field preview */}
+                      <div className="mt-2 rounded-lg bg-black/30 ring-1 ring-white/[0.04] overflow-hidden">
+                        <div className="scan-line h-1 bg-primary/10" />
+                        <div className="px-3 py-2 font-mono text-xs space-y-0.5">
+                          <span className="terminal-text transition-all group-hover:scale-105 group-hover:text-shadow-[0_0_8px_oklch(0.627_0.194_149.214/40%)] inline-block origin-left">
+                            {"{ "}
+                          </span>
+                          {Object.entries(definition).map(([k, v]) => (
+                            <div key={k} className="pl-4">
+                              <span className="text-muted-foreground">{k}</span>
+                              <span className="terminal-text">: {v}</span>
+                            </div>
+                          ))}
+                          <span className="terminal-text transition-all group-hover:scale-105 group-hover:text-shadow-[0_0_8px_oklch(0.627_0.194_149.214/40%)] inline-block origin-left">
+                            {" }"}
+                          </span>
+                        </div>
+                      </div>
+                    </CardHeader>
+                  </Card>
+                </ScanLine>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       )}
     </div>
   );

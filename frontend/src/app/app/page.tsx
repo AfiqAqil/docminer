@@ -1,8 +1,12 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { Braces, CheckCircle2, FileUp, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { CountUp } from "@/components/effects/count-up";
+import { ParticleCanvas } from "@/components/effects/particle-canvas";
+import { ScanLine } from "@/components/effects/scan-line";
 import { PageHeader } from "@/components/page-header";
 import { StatusBadge } from "@/components/status-badge";
 import { buttonVariants } from "@/components/ui/button";
@@ -14,6 +18,7 @@ import {
   type ExtractionJob,
   type Schema,
 } from "@/lib/api/client";
+import { staggerContainer, staggerItem } from "@/lib/motion";
 
 export default function DashboardPage() {
   const [documents, setDocuments] = useState<Document[]>([]);
@@ -114,7 +119,7 @@ function OnboardingView({
   const completed = [hasDocuments, hasSchemas, false];
 
   return (
-    <div className="animate-fade-up">
+    <div>
       <div className="text-center mb-14 mt-10">
         <h1 className="font-display text-3xl font-bold tracking-tight mb-3">
           Welcome to <span className="text-primary">docminer</span>
@@ -124,53 +129,59 @@ function OnboardingView({
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto stagger-children">
+      <motion.div
+        className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto"
+        variants={staggerContainer}
+        initial="hidden"
+        animate="visible"
+      >
         {steps.map((step, i) => {
           const done = completed[i];
           return (
-            <Card
-              key={step.title}
-              className={`card-hover relative ${done ? "ring-1 ring-emerald-500/20" : "ring-1 ring-white/[0.06]"}`}
-            >
-              <CardHeader className="items-center text-center">
-                <div className="text-xs text-muted-foreground mb-2 font-display">
-                  Step {i + 1}
-                </div>
-                <div
-                  className={`rounded-xl p-3.5 mb-2 ${
-                    done
-                      ? "bg-emerald-500/10 shadow-[0_0_16px_oklch(0.627_0.194_149.214/12%)]"
-                      : "bg-primary/10 shadow-[0_0_16px_oklch(0.55_0.25_285/10%)]"
-                  }`}
-                >
-                  {done ? (
-                    <CheckCircle2 className="size-6 text-emerald-400" />
-                  ) : (
-                    <step.icon className="size-6 text-primary" />
-                  )}
-                </div>
-                <CardTitle className="text-base font-display">
-                  {step.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="text-center">
-                <p className="text-sm text-muted-foreground mb-4">
-                  {step.description}
-                </p>
-                <Link
-                  href={step.href}
-                  className={buttonVariants({
-                    variant: done ? "outline" : "default",
-                    size: "sm",
-                  })}
-                >
-                  {done ? "Done" : step.label}
-                </Link>
-              </CardContent>
-            </Card>
+            <motion.div key={step.title} variants={staggerItem}>
+              <Card
+                className={`card-hover relative ${done ? "ring-1 ring-emerald-500/20" : "ring-1 ring-white/[0.06]"}`}
+              >
+                <CardHeader className="items-center text-center">
+                  <div className="text-xs text-muted-foreground mb-2 font-display">
+                    Step {i + 1}
+                  </div>
+                  <div
+                    className={`rounded-xl p-3.5 mb-2 ${
+                      done
+                        ? "bg-emerald-500/10 shadow-[var(--glow-success-md)]"
+                        : "bg-primary/10 shadow-[var(--glow-md)]"
+                    }`}
+                  >
+                    {done ? (
+                      <CheckCircle2 className="size-6 text-emerald-400" />
+                    ) : (
+                      <step.icon className="size-6 text-primary" />
+                    )}
+                  </div>
+                  <CardTitle className="text-base font-display">
+                    {step.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="text-center">
+                  <p className="text-sm text-muted-foreground mb-4">
+                    {step.description}
+                  </p>
+                  <Link
+                    href={step.href}
+                    className={buttonVariants({
+                      variant: done ? "outline" : "default",
+                      size: "sm",
+                    })}
+                  >
+                    {done ? "Done" : step.label}
+                  </Link>
+                </CardContent>
+              </Card>
+            </motion.div>
           );
         })}
-      </div>
+      </motion.div>
     </div>
   );
 }
@@ -202,77 +213,126 @@ function StatsView({
   const recent = extractions.slice(0, 5);
 
   return (
-    <div>
-      <PageHeader title="Dashboard">
-        <Link href="/app/extract" className={buttonVariants()}>
-          New Extraction
-        </Link>
-      </PageHeader>
+    <div className="relative">
+      <ParticleCanvas
+        count={20}
+        className="absolute inset-0 w-full h-full opacity-60"
+      />
 
-      {/* Stat cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10 stagger-children">
-        <StatCard label="Documents" value={documents.length} />
-        <StatCard label="Schemas" value={schemas.length} />
-        <StatCard label="Extractions" value={extractions.length} />
-        <StatCard label="Success Rate" value={`${successRate}%`} />
+      <div className="relative z-10">
+        <PageHeader title="Dashboard">
+          <Link href="/app/extract" className={buttonVariants()}>
+            New Extraction
+          </Link>
+        </PageHeader>
+
+        {/* Stat cards */}
+        <motion.div
+          className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10"
+          variants={staggerContainer}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.div variants={staggerItem}>
+            <StatCard label="Documents" value={documents.length} />
+          </motion.div>
+          <motion.div variants={staggerItem}>
+            <StatCard label="Schemas" value={schemas.length} />
+          </motion.div>
+          <motion.div variants={staggerItem}>
+            <StatCard label="Extractions" value={extractions.length} />
+          </motion.div>
+          <motion.div variants={staggerItem}>
+            <StatCard
+              label="Success Rate"
+              value={successRate}
+              suffix="%"
+              glow="success"
+            />
+          </motion.div>
+        </motion.div>
+
+        {/* Recent extractions */}
+        {recent.length > 0 && (
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+          >
+            <h2 className="font-display text-lg font-medium mb-4">
+              Recent Extractions
+            </h2>
+            <div className="flex flex-col gap-2">
+              {recent.map((job) => (
+                <motion.div key={job.id} variants={staggerItem}>
+                  <ScanLine onHover>
+                    <Card
+                      size="sm"
+                      className="card-hover ring-1 ring-white/[0.06]"
+                    >
+                      <CardHeader>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <span className="text-sm font-medium">
+                              {docMap.get(job.document_id) ??
+                                `Doc #${job.document_id}`}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              {schemaMap.get(job.schema_id) ??
+                                `Schema #${job.schema_id}`}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <StatusBadge
+                              status={
+                                job.status as
+                                  | "pending"
+                                  | "processing"
+                                  | "completed"
+                                  | "failed"
+                              }
+                            />
+                            <span className="text-xs text-muted-foreground font-mono">
+                              {formatRelativeTime(job.created_at)}
+                            </span>
+                          </div>
+                        </div>
+                      </CardHeader>
+                    </Card>
+                  </ScanLine>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
       </div>
-
-      {/* Recent extractions */}
-      {recent.length > 0 && (
-        <div className="animate-fade-up" style={{ animationDelay: "200ms" }}>
-          <h2 className="font-display text-lg font-medium mb-4">
-            Recent Extractions
-          </h2>
-          <div className="flex flex-col gap-2 stagger-children">
-            {recent.map((job) => (
-              <Card
-                key={job.id}
-                size="sm"
-                className="card-hover ring-1 ring-white/[0.06]"
-              >
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <span className="text-sm font-medium">
-                        {docMap.get(job.document_id) ??
-                          `Doc #${job.document_id}`}
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        {schemaMap.get(job.schema_id) ??
-                          `Schema #${job.schema_id}`}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <StatusBadge
-                        status={
-                          job.status as
-                            | "pending"
-                            | "processing"
-                            | "completed"
-                            | "failed"
-                        }
-                      />
-                      <span className="text-xs text-muted-foreground font-mono">
-                        {formatRelativeTime(job.created_at)}
-                      </span>
-                    </div>
-                  </div>
-                </CardHeader>
-              </Card>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
 
-function StatCard({ label, value }: { label: string; value: number | string }) {
+function StatCard({
+  label,
+  value,
+  suffix,
+  glow,
+}: {
+  label: string;
+  value: number | string;
+  suffix?: string;
+  glow?: "success";
+}) {
+  const numericValue = typeof value === "number" ? value : null;
   return (
-    <Card className="card-hover ring-1 ring-white/[0.06]">
+    <Card
+      className={`card-hover ring-1 ring-white/[0.06] ${glow === "success" ? "hover:shadow-[var(--glow-success-sm)]" : ""}`}
+    >
       <CardContent className="pt-4">
         <p className="font-display text-2xl font-bold tracking-tight">
-          {value}
+          {numericValue !== null ? (
+            <CountUp value={numericValue} suffix={suffix} />
+          ) : (
+            value
+          )}
         </p>
         <p className="text-xs text-muted-foreground mt-0.5">{label}</p>
       </CardContent>
