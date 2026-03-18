@@ -1,7 +1,26 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  transpilePackages: ["three"],
+  async redirects() {
+    return [
+      {
+        source: "/documents",
+        destination: "/app/documents",
+        permanent: true,
+      },
+      {
+        source: "/schemas",
+        destination: "/app/schemas",
+        permanent: true,
+      },
+      {
+        source: "/extract",
+        destination: "/app/extract",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
