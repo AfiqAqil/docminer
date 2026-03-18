@@ -1,6 +1,10 @@
+"use client";
+
+import { motion } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { fadeUp } from "@/lib/motion";
 
 interface EmptyStateProps {
   icon: LucideIcon;
@@ -20,8 +24,13 @@ export function EmptyState({
   onAction,
 }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center py-20 text-center animate-fade-up">
-      <div className="rounded-2xl bg-primary/10 p-5 mb-5 shadow-[0_0_24px_oklch(0.55_0.25_285/10%)]">
+    <motion.div
+      className="flex flex-col items-center justify-center py-20 text-center"
+      variants={fadeUp}
+      initial="hidden"
+      animate="visible"
+    >
+      <div className="rounded-2xl bg-primary/10 p-5 mb-5 shadow-[var(--glow-md)]">
         <Icon className="size-8 text-primary" />
       </div>
       <h2 className="font-display text-lg font-medium mb-1.5">{title}</h2>
@@ -36,6 +45,6 @@ export function EmptyState({
       {actionLabel && onAction && !actionHref && (
         <Button onClick={onAction}>{actionLabel}</Button>
       )}
-    </div>
+    </motion.div>
   );
 }

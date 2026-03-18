@@ -85,6 +85,21 @@
   --sidebar-accent-foreground: oklch(0.785 0.18 285);
   --sidebar-border: oklch(1 0 0 / 6%);
   --sidebar-ring: oklch(0.55 0.25 285);
+
+  /* Neon glow system — violet */
+  --glow-sm: 0 0 8px oklch(0.55 0.25 285 / 25%);
+  --glow-md: 0 0 16px oklch(0.55 0.25 285 / 35%);
+  --glow-lg: 0 0 32px oklch(0.55 0.25 285 / 45%);
+
+  /* Neon glow — emerald (success) */
+  --glow-success-sm: 0 0 8px oklch(0.627 0.194 149.214 / 25%);
+  --glow-success-md: 0 0 16px oklch(0.627 0.194 149.214 / 35%);
+  --glow-success-lg: 0 0 32px oklch(0.627 0.194 149.214 / 45%);
+
+  /* Neon glow — red (destructive) */
+  --glow-destructive-sm: 0 0 8px oklch(0.704 0.191 22.216 / 25%);
+  --glow-destructive-md: 0 0 16px oklch(0.704 0.191 22.216 / 35%);
+  --glow-destructive-lg: 0 0 32px oklch(0.704 0.191 22.216 / 45%);
 }
 
 @layer base {
@@ -111,15 +126,44 @@
   background-size: 256px 256px;
 }
 
-/* Radial violet atmospheric glow */
-.atmo-glow {
+/* Perspective grid background — cyberpunk depth effect */
+.perspective-grid {
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 0;
+  overflow: hidden;
+}
+
+.perspective-grid::before {
+  content: "";
+  position: absolute;
+  inset: -50% -10% 0;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      oklch(0.55 0.25 285 / 4%) 0px,
+      transparent 1px,
+      transparent 80px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      oklch(0.55 0.25 285 / 4%) 0px,
+      transparent 1px,
+      transparent 80px
+    );
+  transform: perspective(500px) rotateX(45deg);
+  transform-origin: center top;
+  mask-image: linear-gradient(to bottom, transparent 10%, white 40%, white 60%, transparent 90%);
+}
+
+.perspective-grid::after {
+  content: "";
+  position: absolute;
+  inset: 0;
   background: radial-gradient(
     ellipse 70% 50% at 55% 40%,
-    oklch(0.55 0.25 285 / 6%) 0%,
+    oklch(0.55 0.25 285 / 5%) 0%,
     transparent 70%
   );
 }
@@ -159,7 +203,7 @@
 }
 .card-hover:hover {
   transform: translateY(-1px);
-  box-shadow: 0 0 20px oklch(0.55 0.25 285 / 8%);
+  box-shadow: var(--glow-sm);
   border-color: oklch(1 0 0 / 12%);
 }
 
@@ -193,4 +237,139 @@
 
 .status-processing {
   animation: ring-expand 1.5s ease-out infinite;
+}
+
+/* Scan-line sweep — thin light beam top-to-bottom */
+@keyframes scan-line {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+.scan-line {
+  position: relative;
+  overflow: hidden;
+}
+
+.scan-line::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    oklch(0.55 0.25 285 / 8%) 45%,
+    oklch(0.55 0.25 285 / 15%) 50%,
+    oklch(0.55 0.25 285 / 8%) 55%,
+    transparent 100%
+  );
+  animation: scan-line 3s ease-in-out infinite;
+}
+
+.scan-line-hover {
+  position: relative;
+  overflow: hidden;
+}
+
+.scan-line-hover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    oklch(0.55 0.25 285 / 6%) 45%,
+    oklch(0.55 0.25 285 / 12%) 50%,
+    oklch(0.55 0.25 285 / 6%) 55%,
+    transparent 100%
+  );
+  transform: translateY(-100%);
+  transition: none;
+  opacity: 0;
+}
+
+.scan-line-hover:hover::after {
+  opacity: 1;
+  animation: scan-line 2s ease-in-out;
+}
+
+/* Terminal text — green monospace readout */
+.terminal-text {
+  font-family: var(--font-jetbrains-mono), monospace;
+  color: oklch(0.627 0.194 149.214);
+  text-shadow: 0 0 6px oklch(0.627 0.194 149.214 / 30%);
+}
+
+/* Glitch shake — rapid jitter for error states */
+@keyframes glitch-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-3px); }
+  40% { transform: translateX(3px); }
+  60% { transform: translateX(-2px); }
+  80% { transform: translateX(2px); }
+}
+
+.glitch-shake {
+  animation: glitch-shake 0.3s ease-in-out;
+}
+
+/* Continuous logo pulse — subtle infinite glow */
+@keyframes logo-pulse-continuous {
+  0%, 100% { filter: drop-shadow(0 0 0px oklch(0.55 0.25 285 / 0%)); }
+  50% { filter: drop-shadow(0 0 6px oklch(0.55 0.25 285 / 35%)); }
+}
+
+.logo-pulse-continuous {
+  animation: logo-pulse-continuous 3s ease-in-out infinite;
+}
+
+/* Neon laser progress — indeterminate sweep */
+@keyframes laser-sweep {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+.laser-progress {
+  position: relative;
+  overflow: hidden;
+  height: 2px;
+  background: oklch(0.55 0.25 285 / 10%);
+  border-radius: 1px;
+}
+
+.laser-progress::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 50%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    oklch(0.55 0.25 285 / 80%),
+    oklch(0.785 0.18 285),
+    oklch(0.55 0.25 285 / 80%),
+    transparent
+  );
+  box-shadow: var(--glow-sm);
+  animation: laser-sweep 1.5s ease-in-out infinite;
+}
+
+/* Reduced motion — disable all custom animations */
+@media (prefers-reduced-motion: reduce) {
+  .scan-line::after,
+  .scan-line-hover::after,
+  .laser-progress::after {
+    animation: none;
+  }
+
+  .logo-pulse-continuous,
+  .glitch-shake,
+  .status-processing {
+    animation: none;
+  }
+
+  .perspective-grid::before {
+    transform: none;
+  }
 }

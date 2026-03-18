@@ -8,15 +8,17 @@ const statusConfig = {
   processing: {
     label: "Processing",
     className:
-      "bg-primary/10 text-primary border-primary/20 animate-pulse status-processing",
+      "bg-primary/10 text-primary border-primary/20 animate-pulse status-processing shadow-[var(--glow-sm)]",
   },
   completed: {
     label: "Completed",
-    className: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+    className:
+      "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-[var(--glow-success-sm)]",
   },
   failed: {
     label: "Failed",
-    className: "bg-destructive/10 text-destructive border-destructive/20",
+    className:
+      "bg-destructive/10 text-destructive border-destructive/20 shadow-[var(--glow-destructive-sm)]",
   },
 } as const;
 

@@ -12,10 +12,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const links = [
-  { href: "/", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/extract", label: "Extract", icon: Sparkles },
-  { href: "/documents", label: "Documents", icon: FileText },
-  { href: "/schemas", label: "Schemas", icon: Braces },
+  { href: "/app", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/app/extract", label: "Extract", icon: Sparkles },
+  { href: "/app/documents", label: "Documents", icon: FileText },
+  { href: "/app/schemas", label: "Schemas", icon: Braces },
 ];
 
 export function Sidebar() {
@@ -26,7 +26,7 @@ export function Sidebar() {
       {/* Desktop sidebar */}
       <aside className="hidden lg:flex flex-col w-[220px] min-h-screen shrink-0 border-r border-sidebar-border bg-sidebar backdrop-blur-xl">
         <div className="flex items-center gap-2.5 px-5 py-5">
-          <Gem className="size-5 text-primary logo-pulse" />
+          <Gem className="size-5 text-primary logo-pulse-continuous" />
           <span className="font-display font-semibold text-sm tracking-tight text-sidebar-foreground">
             docminer
           </span>
@@ -39,10 +39,10 @@ export function Sidebar() {
               <Link
                 key={href}
                 href={href}
-                className={`nav-pill flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium ${
+                className={`nav-pill scan-line-hover flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium ${
                   isActive
-                    ? "nav-pill-active bg-sidebar-accent text-sidebar-accent-foreground"
-                    : "text-muted-foreground hover:bg-white/[0.04] hover:text-sidebar-foreground"
+                    ? "nav-pill-active bg-sidebar-accent text-sidebar-accent-foreground border-l-2 border-primary shadow-[inset_2px_0_8px_oklch(0.55_0.25_285/20%)]"
+                    : "text-muted-foreground hover:bg-white/[0.04] hover:text-sidebar-foreground border-l-2 border-transparent"
                 }`}
               >
                 <Icon
@@ -57,7 +57,7 @@ export function Sidebar() {
         <div className="px-3 pb-4">
           <div className="h-px bg-sidebar-border mb-2" />
           <Link
-            href="/settings"
+            href="/app/settings"
             className="nav-pill flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:bg-white/[0.04] hover:text-sidebar-foreground"
           >
             <Settings className="size-[18px] shrink-0" />
