@@ -145,9 +145,23 @@ backend/
 - **Errors/Success:** Sonner toasts, not inline `<p>` tags.
 - **Layout:** Compact sidebar (icons + labels) + main content area with `max-w-6xl`.
 
+## Roadmap Management
+
+`ROADMAP.md` is the living product management document. It contains: product vision, success criteria, prioritized tasks by product area, and a decision log.
+
+**Consult ROADMAP.md** at the start of feature work to understand priorities and context.
+
+**Update ROADMAP.md** when:
+- A task is completed (move to Done)
+- A new feature idea comes up (add to the appropriate product area with priority)
+- A priority changes (update the marker)
+- A technical/product decision is made (add to Decision Log with date, summary, and link to detail doc)
+
+Priority markers: 🔴 Now, 🟡 Next, 🟢 Later, ✅ Done
+
 ## Key Files
 
 - `docs/plans/2026-03-13-docminer-design.md` — approved design document
 - `docs/plans/2026-03-16-ui-foundation-design.md` — approved UI foundation design
 - `docs/research/2026-03-17-extraction-landscape.md` — extraction library landscape research
-- `TODO.md` — feature tracker and project status
+- `ROADMAP.md` — product vision, prioritized roadmap, and decision log
