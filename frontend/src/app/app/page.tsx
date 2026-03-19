@@ -1,13 +1,15 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Braces, CheckCircle2, FileUp, Sparkles } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { Braces, CheckCircle2, FileText, FileUp, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CountUp } from "@/components/effects/count-up";
 import { ParticleCanvas } from "@/components/effects/particle-canvas";
 import { ScanLine } from "@/components/effects/scan-line";
 import { PageHeader } from "@/components/page-header";
+import { SectionDivider } from "@/components/section-divider";
 import { StatusBadge } from "@/components/status-badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -234,16 +236,25 @@ function StatsView({
           animate="visible"
         >
           <motion.div variants={staggerItem}>
-            <StatCard label="Documents" value={documents.length} />
+            <StatCard
+              icon={FileText}
+              label="Documents"
+              value={documents.length}
+            />
           </motion.div>
           <motion.div variants={staggerItem}>
-            <StatCard label="Schemas" value={schemas.length} />
-          </motion.div>
-          <motion.div variants={staggerItem}>
-            <StatCard label="Extractions" value={extractions.length} />
+            <StatCard icon={Braces} label="Schemas" value={schemas.length} />
           </motion.div>
           <motion.div variants={staggerItem}>
             <StatCard
+              icon={Sparkles}
+              label="Extractions"
+              value={extractions.length}
+            />
+          </motion.div>
+          <motion.div variants={staggerItem}>
+            <StatCard
+              icon={CheckCircle2}
               label="Success Rate"
               value={successRate}
               suffix="%"
@@ -259,6 +270,14 @@ function StatsView({
             initial="hidden"
             animate="visible"
           >
+            <SectionDivider className="mb-8" />
+            <div className="inline-flex items-center gap-2.5 mb-1">
+              <span className="h-px w-5 bg-primary/30" />
+              <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-primary/40">
+                History
+              </span>
+              <span className="h-px w-5 bg-primary/30" />
+            </div>
             <h2 className="font-display text-lg font-medium mb-4">
               Recent Extractions
             </h2>
@@ -311,11 +330,13 @@ function StatsView({
 }
 
 function StatCard({
+  icon: Icon,
   label,
   value,
   suffix,
   glow,
 }: {
+  icon?: LucideIcon;
   label: string;
   value: number | string;
   suffix?: string;
@@ -324,17 +345,36 @@ function StatCard({
   const numericValue = typeof value === "number" ? value : null;
   return (
     <Card
-      className={`card-hover ring-1 ring-white/[0.06] ${glow === "success" ? "hover:shadow-[var(--glow-success-sm)]" : ""}`}
+      className={`relative card-hover ring-1 ring-white/[0.06] overflow-hidden ${glow === "success" ? "hover:shadow-[var(--glow-success-sm)]" : ""}`}
     >
-      <CardContent className="pt-4">
-        <p className="font-display text-2xl font-bold tracking-tight">
-          {numericValue !== null ? (
-            <CountUp value={numericValue} suffix={suffix} />
-          ) : (
-            value
+      <div
+        className="absolute inset-0 pointer-events-none opacity-40"
+        style={{
+          background:
+            "radial-gradient(ellipse at 50% 60%, oklch(0.55 0.25 285 / 8%), transparent 70%)",
+        }}
+      />
+      <CardContent className="relative pt-4">
+        <div className="flex items-center gap-3">
+          {Icon && (
+            <div
+              className="rounded-lg p-2 shadow-[var(--glow-sm)]"
+              style={{ backgroundColor: "oklch(0.55 0.25 285 / 8%)" }}
+            >
+              <Icon className="size-4 text-primary/60" />
+            </div>
           )}
-        </p>
-        <p className="text-xs text-muted-foreground mt-0.5">{label}</p>
+          <div>
+            <p className="font-display text-2xl font-bold tracking-tight">
+              {numericValue !== null ? (
+                <CountUp value={numericValue} suffix={suffix} />
+              ) : (
+                value
+              )}
+            </p>
+            <p className="text-xs text-muted-foreground mt-0.5">{label}</p>
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

@@ -274,6 +274,14 @@ export default function SchemasPage() {
                     <CardHeader>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
+                          <div
+                            className="rounded-md p-1 shadow-[var(--glow-sm)]"
+                            style={{
+                              backgroundColor: "oklch(0.55 0.25 285 / 8%)",
+                            }}
+                          >
+                            <Braces className="size-3 text-primary/50" />
+                          </div>
                           <CardTitle>{schema.name}</CardTitle>
                           <Badge variant="secondary">
                             {fieldCount} field{fieldCount !== 1 ? "s" : ""}

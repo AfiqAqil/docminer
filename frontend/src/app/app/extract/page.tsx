@@ -110,6 +110,13 @@ export default function ExtractPage() {
           <ScanLine active={isRunning ?? false}>
             <Card className="ring-1 ring-white/[0.06]">
               <CardHeader>
+                <div className="inline-flex items-center gap-2 mb-1">
+                  <span className="h-px w-4 bg-primary/30" />
+                  <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-primary/35">
+                    Config
+                  </span>
+                  <span className="h-px w-4 bg-primary/30" />
+                </div>
                 <CardTitle className="font-display">Configuration</CardTitle>
               </CardHeader>
               <CardContent className="flex flex-col gap-4">
@@ -184,6 +191,7 @@ export default function ExtractPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -4 }}
               >
+                <ExtractIllustration />
                 <EmptyState
                   icon={Sparkles}
                   title="Ready to extract"
@@ -258,6 +266,38 @@ export default function ExtractPage() {
               </motion.div>
             )}
           </AnimatePresence>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ExtractIllustration() {
+  const fields = ["field_1", "field_2", "field_3"];
+  return (
+    <div className="relative h-[100px] flex items-center justify-center">
+      <div
+        className="absolute inset-0 pointer-events-none opacity-30"
+        style={{
+          background:
+            "radial-gradient(ellipse at 50% 50%, oklch(0.55 0.25 285 / 12%), transparent 70%)",
+        }}
+      />
+      <div className="relative w-full max-w-[160px] space-y-1">
+        <div className="font-mono text-[10px] text-primary/30 tracking-wider pl-1">
+          {"schema {"}
+        </div>
+        {fields.map((f) => (
+          <div key={f} className="flex items-center gap-2 pl-4">
+            <span className="font-mono text-[10px] text-muted-foreground/35">
+              {f}
+            </span>
+            <span className="flex-1 border-b border-dotted border-white/[0.04]" />
+            <span className="font-mono text-[10px] text-primary/25">?</span>
+          </div>
+        ))}
+        <div className="font-mono text-[10px] text-primary/30 tracking-wider pl-1">
+          {"}"}
         </div>
       </div>
     </div>
